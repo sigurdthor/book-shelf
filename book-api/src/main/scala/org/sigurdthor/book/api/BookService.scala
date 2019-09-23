@@ -1,9 +1,11 @@
 package org.sigurdthor.book.api
 
-import java.util.UUID
+import java.time.OffsetDateTime
 
+import cats.data.NonEmptyList
 import com.lightbend.lagom.scaladsl.api.transport.Method
 import com.lightbend.lagom.scaladsl.api.{Descriptor, Service, ServiceCall}
+import org.sigurdthor.book.api.domain.model.{Author, Book, Description, ISBN, Title}
 import play.api.libs.json.{Format, Json}
 
 
@@ -31,8 +33,8 @@ trait BookService extends Service {
 }
 
 
-case class AddBookRequest(name: String)
-case class AddBookResponse(id: UUID, name: String)
+case class AddBookRequest(book: Book)
+case class AddBookResponse(addedAt: OffsetDateTime)
 
 object AddBookRequest {
   implicit val format: Format[AddBookRequest] = Json.format

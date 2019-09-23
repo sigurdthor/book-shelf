@@ -8,6 +8,8 @@ scalaVersion in ThisBuild := "2.12.8"
 
 val macwire = "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided"
 val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % Test
+val zio = "dev.zio" %% "zio" % "1.0.0-RC12-1"
+val cats = "org.typelevel" %% "cats-core" % "2.0.0"
 
 lazy val `book-shelf` = (project in file("."))
   .aggregate(`book-api`, `book-impl`)
@@ -15,7 +17,8 @@ lazy val `book-shelf` = (project in file("."))
 lazy val `book-api` = (project in file("book-api"))
   .settings(
     libraryDependencies ++= Seq(
-      lagomScaladslApi
+      lagomScaladslApi,
+      cats
     )
   )
 
@@ -28,6 +31,7 @@ lazy val `book-impl` = (project in file("book-impl"))
       lagomScaladslPersistenceCassandra,
       lagomScaladslKafkaBroker,
       lagomScaladslTestKit,
+      zio,
       macwire,
       scalaTest
     )

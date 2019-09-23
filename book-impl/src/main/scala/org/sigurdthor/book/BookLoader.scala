@@ -8,7 +8,7 @@ import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
 import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
 import org.sigurdthor.book.api.BookService
-import org.sigurdthor.book.domain.{BookEntity, BookshelfSerializerRegistry}
+import org.sigurdthor.book.domain.{BookEntity, BookSerializerRegistry}
 import org.sigurdthor.book.impl.{BookServiceGrpcImpl, BookServiceRestImpl}
 import play.api.libs.ws.ahc.AhcWSComponents
 
@@ -35,7 +35,7 @@ abstract class BookApplication(context: LagomApplicationContext)
     .additionalRouter(wire[BookServiceGrpcImpl])
 
   // Register the JSON serializer registry
-  override lazy val jsonSerializerRegistry: JsonSerializerRegistry = BookshelfSerializerRegistry
+  override lazy val jsonSerializerRegistry: JsonSerializerRegistry = BookSerializerRegistry
 
   // Register the book-shelf persistent entity
   persistentEntityRegistry.register(wire[BookEntity])
