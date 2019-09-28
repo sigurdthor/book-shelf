@@ -7,8 +7,9 @@ import scala.concurrent.Future
 
 trait ZioContext {
 
+  lazy val runtime = new DefaultRuntime {}
+
   def zioCtx[T](block: => IO[ServiceError, T]): Future[T] = {
-    val runtime = new DefaultRuntime {}
     runtime.unsafeRunToFuture(block)
   }
 

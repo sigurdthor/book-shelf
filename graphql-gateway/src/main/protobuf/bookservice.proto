@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.sigurdthor.bookshelf.grpc";
+option java_outer_classname = "BookProto";
+
+package book;
+
+service BookService {
+    rpc addBook (AddBookRequest) returns (AddBookResponse) {
+    }
+}
+
+message AddBookRequest {
+    string isbn = 1;
+    string title = 2;
+    repeated string authors = 3;
+    string description = 4;
+}
+
+message AddBookResponse {
+    string addedAt = 1;
+}
