@@ -1,0 +1,49 @@
+---
+apiVersion: "apps/v1"
+kind: Deployment
+metadata:
+  name: "bookservice"
+  labels:
+    appName: bookservice
+    appNameVersion: "bookservice"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      appNameVersion: "bookservice-v1-0"
+  template:
+    metadata:
+      labels:
+        appName: bookservice
+        appNameVersion: "bookservice-v1-0"
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: bookservice
+          image: book-impl:1.0-SNAPSHOT
+          ports:
+            - name: http
+              containerPort: 10000
+            - name: https
+              containerPort: 11000  
+          volumeMounts: []
+      volumes: []
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    appName: bookservice
+  name: bookservice
+spec:
+  ports:
+    - name: http
+      port: 10000
+      protocol: TCP
+      targetPort: 10000
+    - name: https
+      port: 11000
+      protocol: TCP
+      targetPort: 11000  
+  selector:
+    appName: bookservice

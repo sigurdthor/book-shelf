@@ -1,0 +1,45 @@
+---
+apiVersion: "apps/v1"
+kind: Deployment
+metadata:
+  name: "graphql-gateway"
+  labels:
+    appName: graphql-gateway
+    appNameVersion: "graphql-gateway-v1-0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      appNameVersion: "graphql-gateway-v1-0"
+  template:
+    metadata:
+      labels:
+        appName: graphql-gateway
+        appNameVersion: "graphql-gateway-v1-0"
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: graphql-gateway
+          image: graphql-gateway:1.0-SNAPSHOT
+          ports:
+            - containerPort: 8000
+              name: http
+          volumeMounts: []
+      volumes: []
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    appName: graphql-gateway
+  name: graphql-gateway
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      nodePort: 30800
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    appName: graphql-gateway

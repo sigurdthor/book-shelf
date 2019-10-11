@@ -1,7 +1,6 @@
 package org.sigurdthor.book
 
-import com.lightbend.lagom.scaladsl.api.ServiceLocator
-import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
+import com.lightbend.lagom.scaladsl.akka.discovery.AkkaDiscoveryComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
@@ -15,9 +14,7 @@ import play.api.libs.ws.ahc.AhcWSComponents
 class BookLoader extends LagomApplicationLoader {
 
   override def load(context: LagomApplicationContext): LagomApplication =
-    new BookApplication(context) {
-      override def serviceLocator: ServiceLocator = NoServiceLocator
-    }
+    new BookApplication(context) with AkkaDiscoveryComponents
 
   override def loadDevMode(context: LagomApplicationContext): LagomApplication =
     new BookApplication(context) with LagomDevModeComponents
