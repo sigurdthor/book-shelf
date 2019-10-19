@@ -19,6 +19,7 @@ val http4sCirce = "org.http4s" %% "http4s-circe" % Http4sVersion
 val http4sDsl = "org.http4s" %% "http4s-dsl" % Http4sVersion
 val circe = "io.circe" %% "circe-generic" % CirceVersion
 val circeOptics = "io.circe" %% "circe-optics" % "0.9.3"
+val alpnVersion = "2.0.9"
 
 val discovery =  "com.typesafe.akka" %% "akka-discovery" % "2.5.25"
 val discoveryLagom = "com.lightbend.lagom" %% "lagom-scaladsl-akka-discovery-service-locator" % "1.5.3"
@@ -75,9 +76,10 @@ lazy val `book-impl` = (project in file("book-impl"))
   .dependsOn(`book-api`)
 
 lazy val `graphql-gateway` = (project in file("graphql-gateway"))
-  .enablePlugins(AkkaGrpcPlugin, JavaAppPackaging, DockerPlugin)
+  .enablePlugins(AkkaGrpcPlugin, JavaAppPackaging, DockerPlugin, JavaAgent)
   .enablePlugins(PlayAkkaHttp2Support)
   .settings(
+    javaAgents += "org.mortbay.jetty.alpn" % "jetty-alpn-agent" % alpnVersion % "runtime",
     libraryDependencies ++= Seq(
       http4s,
       http4sCirce,
@@ -103,4 +105,4 @@ lazy val `graphql-gateway` = (project in file("graphql-gateway"))
   )
 
 lagomKafkaEnabled in ThisBuild := false
-lagomServiceLocatorEnabled in ThisBuild := false
+//lagomServiceLocatorEnabled in ThisBuild := false

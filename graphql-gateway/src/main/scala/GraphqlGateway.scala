@@ -19,7 +19,8 @@ object GraphqlGateway extends IOApp with Routes {
   private implicit val dispatcher: ExecutionContextExecutor = actorSystem.dispatcher
   private implicit val materializer: Materializer = ActorMaterializer()
 
-  private lazy val settings = GrpcClientSettings.fromConfig("org.sigurdthor.book.BookService")
+  private lazy val settings = GrpcClientSettings.connectToServiceAt("localhost", 8443)
+    //GrpcClientSettings.fromConfig("org.sigurdthor.book.BookService")
 
   lazy val bookService: BookServiceClient = BookServiceClient(settings)
 
