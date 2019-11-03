@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.sigurdthor.bookshelf.grpc";
+option java_outer_classname = "RecommendationProto";
+
+package recommendation;
+
+service RecommendationService {
+    rpc getRecommendations (RecommendationRequest) returns (RecommendationResponse) {
+    }
+}
+
+message RecommendationRequest {
+    string isbn = 1;
+}
+
+message RecommendationResponse {
+    repeated Recommendation recommendations = 1;
+}
+
+message Recommendation {
+    string isbn = 1;
+    string title = 2;
+    repeated string authors = 3;
+}

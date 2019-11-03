@@ -10,14 +10,14 @@ import org.sigurdthor.book.domain.BookEntity
 import org.sigurdthor.book.domain.commands.AddBook
 import org.sigurdthor.book.domain.model.LagomError
 import org.sigurdthor.book.domain.validation.Validator
-import org.sigurdthor.book.utils.ZioContext
+import org.sigurdthor.book.utils.ZioContext._
 import org.sigurdthor.bookshelf.grpc.{AbstractBookServiceRouter, AddBookRequest, AddBookResponse}
 import zio.IO
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class BookServiceGrpcImpl(persistentEntityRegistry: PersistentEntityRegistry, mat: Materializer, system: ActorSystem)(implicit ec: ExecutionContext, validator: Validator[Book])
-  extends AbstractBookServiceRouter(mat, system) with ZioContext {
+  extends AbstractBookServiceRouter(mat, system) {
 
   override def addBook(req: AddBookRequest): Future[AddBookResponse] = zioCtx {
     for {

@@ -1,13 +1,15 @@
 package org.sigurdthor.book.utils
 
 import org.sigurdthor.book.domain.model.ServiceError
-import zio.{DefaultRuntime, IO}
+import zio.clock.Clock
+import zio.internal.PlatformLive
+import zio.{IO, Runtime}
 
 import scala.concurrent.Future
 
-trait ZioContext {
+object ZioContext {
 
-  lazy val runtime = new DefaultRuntime {}
+  lazy val runtime = Runtime(Clock, PlatformLive.Default)
 
   def zioCtx[T](block: => IO[ServiceError, T]): Future[T] = {
     runtime.unsafeRunToFuture(block)

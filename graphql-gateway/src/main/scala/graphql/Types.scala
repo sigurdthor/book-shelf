@@ -1,18 +1,20 @@
 package graphql
 
-import sangria.schema.{Field, ObjectType, StringType, fields}
+import org.sigurdthor.bookshelf.grpc.Recommendation
+import sangria.schema.{Field, ListType, ObjectType, StringType, fields}
 
 case class Book(isbn: String, title: String)
 
 trait Types {
 
-  lazy val BookType: ObjectType[SecureContext, Book] =
+  lazy val RecommendationType: ObjectType[SecureContext, Recommendation] =
     ObjectType(
-      "Book",
-      "Book info.",
-      fields[SecureContext, Book](
+      "Recommendation",
+      "Recommendation info.",
+      fields[SecureContext, Recommendation](
         Field("isbn", StringType, resolve = _.value.isbn),
-        Field("title", StringType, resolve = _.value.title)
+        Field("title", StringType, resolve = _.value.title),
+        Field("authors", ListType(StringType), resolve = _.value.authors)
       )
     )
 }

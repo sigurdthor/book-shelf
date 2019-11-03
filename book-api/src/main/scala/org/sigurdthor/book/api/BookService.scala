@@ -2,10 +2,12 @@ package org.sigurdthor.book.api
 
 import java.time.OffsetDateTime
 
-import cats.data.NonEmptyList
+import com.lightbend.lagom.scaladsl.api.broker.Topic
+import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
 import com.lightbend.lagom.scaladsl.api.transport.Method
 import com.lightbend.lagom.scaladsl.api.{Descriptor, Service, ServiceCall}
-import org.sigurdthor.book.api.domain.model.{Author, Book, Description, ISBN, Title}
+import org.sigurdthor.book.api.domain.events.BookEventApi
+import org.sigurdthor.book.api.domain.model.Book
 import play.api.libs.json.{Format, Json}
 
 
@@ -19,14 +21,21 @@ trait BookService extends Service {
 
   def addBook: ServiceCall[AddBookRequest, AddBookResponse]
 
+  def bookEvents: Topic[BookEventApi]
 
   override final def descriptor: Descriptor = {
     import Service._
     // @formatter:off
-    named("book-shelf")
+    named("book-service")
       .withCalls(
         restCall(Method.POST, "/api/book", addBook _),
       )
+      .withTopics(
+        topic("book-events", bookEvents)
+          .addProperty(
+            KafkaProperties.partitionKeyStrategy,
+            PartitionKeyStrategy[BookEventApi](_.isbn.value)
+          ))
       .withAutoAcl(true)
     // @formatter:on
   }
@@ -34,6 +43,7 @@ trait BookService extends Service {
 
 
 case class AddBookRequest(book: Book)
+
 case class AddBookResponse(addedAt: OffsetDateTime)
 
 object AddBookRequest {

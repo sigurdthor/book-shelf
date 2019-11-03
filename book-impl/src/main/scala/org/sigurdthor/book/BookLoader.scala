@@ -1,6 +1,7 @@
 package org.sigurdthor.book
 
 import com.lightbend.lagom.scaladsl.akka.discovery.AkkaDiscoveryComponents
+import com.lightbend.lagom.scaladsl.broker.kafka.LagomKafkaComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
 import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
@@ -8,16 +9,16 @@ import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
 import org.sigurdthor.book.api.BookService
 import org.sigurdthor.book.domain.{BookEntity, BookSerializerRegistry}
-import org.sigurdthor.book.impl.{BookServiceGrpcImpl, BookServiceRestImpl}
+import org.sigurdthor.book.impl.{BookServiceGrpcImpl, BookServiceImpl}
 import play.api.libs.ws.ahc.AhcWSComponents
 
 class BookLoader extends LagomApplicationLoader {
 
   override def load(context: LagomApplicationContext): LagomApplication =
-    new BookApplication(context) with AkkaDiscoveryComponents
+    new BookApplication(context) with AkkaDiscoveryComponents with LagomKafkaComponents
 
   override def loadDevMode(context: LagomApplicationContext): LagomApplication =
-    new BookApplication(context) with LagomDevModeComponents
+    new BookApplication(context) with LagomDevModeComponents with LagomKafkaComponents
 
   override def describeService = Some(readDescriptor[BookService])
 }
@@ -28,7 +29,7 @@ abstract class BookApplication(context: LagomApplicationContext)
     with AhcWSComponents {
 
   // Bind the service that this server provides
-  override lazy val lagomServer: LagomServer = serverFor[BookService](wire[BookServiceRestImpl])
+  override lazy val lagomServer: LagomServer = serverFor[BookService](wire[BookServiceImpl])
     .additionalRouter(wire[BookServiceGrpcImpl])
 
   // Register the JSON serializer registry

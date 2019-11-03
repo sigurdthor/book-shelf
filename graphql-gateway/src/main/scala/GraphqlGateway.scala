@@ -6,9 +6,9 @@ import cats.implicits._
 import com.typesafe.config.{Config, ConfigFactory}
 import graphql.SchemaDefinition
 import org.http4s.server.blaze.BlazeServerBuilder
-import org.sigurdthor.bookshelf.grpc.BookServiceClient
+import org.sigurdthor.bookshelf.grpc.{BookServiceClient, RecommendationServiceClient}
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
 object GraphqlGateway extends IOApp with Routes {
   self =>
@@ -19,13 +19,22 @@ object GraphqlGateway extends IOApp with Routes {
   private implicit val dispatcher: ExecutionContextExecutor = actorSystem.dispatcher
   private implicit val materializer: Materializer = ActorMaterializer()
 
-  private lazy val settings = GrpcClientSettings.connectToServiceAt("localhost", 8443)
-    //GrpcClientSettings.fromConfig("org.sigurdthor.book.BookService")
+  private lazy val bookSettings = GrpcClientSettings.connectToServiceAt("localhost", 8443)
+  //GrpcClientSettings.fromConfig("org.sigurdthor.book.BookService")
 
-  lazy val bookService: BookServiceClient = BookServiceClient(settings)
+  lazy val bookService: BookServiceClient = BookServiceClient(bookSettings)
+
+  private lazy val recommendationSettings = GrpcClientSettings.connectToServiceAt("localhost", 8445)
+  //GrpcClientSettings.fromConfig("org.sigurdthor.book.BookService")
+
+  lazy val recommendationService: RecommendationServiceClient = RecommendationServiceClient(recommendationSettings)
 
   implicit val schemaDefinition: SchemaDefinition = new SchemaDefinition {
-    override def bookService: BookServiceClient = self.bookService
+    override val bookService: BookServiceClient = self.bookService
+
+    override val recommendationService = self.recommendationService
+
+    override implicit val executor: ExecutionContext = self.actorSystem.dispatcher
   }
 
   override def run(args: List[String]): IO[ExitCode] =
