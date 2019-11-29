@@ -5,13 +5,14 @@ organization in ThisBuild := "org.sigurdthor"
 version in ThisBuild := "1.0-SNAPSHOT"
 
 // the Scala version that will be used for cross-compiled libraries
-scalaVersion in ThisBuild := "2.12.8"
+scalaVersion in ThisBuild := "2.12.10"
 
 val macwire = "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided"
 val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % Test
-val zio = "dev.zio" %% "zio" % "1.0.0-RC12-1"
+val zio = "dev.zio" %% "zio" % "1.0.0-RC17"
+val catz = "dev.zio"               %% "zio-interop-cats"    % "2.0.0.0-RC8"
 val cats = "org.typelevel" %% "cats-core" % "2.0.0"
-val Http4sVersion = "0.20.4"
+val Http4sVersion = "0.21.0-M5"
 val CirceVersion = "0.11.1"
 
 val http4s = "org.http4s" %% "http4s-blaze-server" % Http4sVersion
@@ -20,6 +21,9 @@ val http4sDsl = "org.http4s" %% "http4s-dsl" % Http4sVersion
 val circe = "io.circe" %% "circe-generic" % CirceVersion
 val circeOptics = "io.circe" %% "circe-optics" % "0.9.3"
 val alpnVersion = "2.0.9"
+val caliban = "com.github.ghostdogpr" %% "caliban" % "0.3.0"
+val calibanHttp4s = "com.github.ghostdogpr" %% "caliban-http4s" % "0.3.0"
+val calibanCats  = "com.github.ghostdogpr" %% "caliban-cats"   % "0.3.0"
 
 val playJsonDerivedCodecs = "org.julienrf" %% "play-json-derived-codecs" % "4.0.0"
 
@@ -27,15 +31,40 @@ val discovery = "com.typesafe.akka" %% "akka-discovery" % "2.5.25"
 val discoveryLagom = "com.lightbend.lagom" %% "lagom-scaladsl-akka-discovery-service-locator" % "1.5.3"
 val discoveryKubernetes = "com.lightbend.akka.discovery" %% "akka-discovery-kubernetes-api" % "1.0.3"
 
-val sangria = "org.sangria-graphql" %% "sangria" % "1.4.2"
-val sangriaCirce = "org.sangria-graphql" %% "sangria-circe" % "1.2.1"
-
+val pureconfig =  "com.github.pureconfig" %% "pureconfig"          % "0.12.1"
 val agensGraph = "net.bitnine" % "agensgraph-jdbc" % "1.4.2"
 
 lazy val `book-shelf` = (project in file("."))
   .aggregate(`book-api`, `book-impl`, `graphql-gateway`, `recommendation-api`, `recommendation-impl`)
 
 lagomServiceEnableSsl in ThisBuild := true
+
+val commonSettings = Def.settings(
+  scalacOptions ++= Seq(
+    "-deprecation",
+    "-encoding",
+    "UTF-8",
+    "-explaintypes",
+    "-Yrangepos",
+    "-feature",
+    "-language:higherKinds",
+    "-language:existentials",
+    "-unchecked",
+    "-Xlint:_,-type-parameter-shadow",
+    "-Ywarn-numeric-widen",
+    "-Ywarn-unused:patvars,-implicits",
+    "-Ywarn-value-discard",
+    "-Ypartial-unification",
+    "-Ywarn-extra-implicit",
+    "-Ywarn-inaccessible",
+    "-Ywarn-infer-any",
+    "-Ywarn-nullary-override",
+    "-Ywarn-nullary-unit",
+    "-opt-inline-from:<source>",
+    "-opt-warnings",
+    "-opt:l:inline"
+  )
+)
 
 lazy val `book-api` = (project in file("book-api"))
   .settings(
@@ -71,6 +100,7 @@ lazy val `book-impl` = (project in file("book-impl"))
     )
   )
   .settings(lagomForkedTestSettings)
+  .settings(commonSettings)
   .settings(
     dockerCommands ++= Seq(
       Cmd("USER", "root"),
@@ -105,6 +135,7 @@ lazy val `recommendation-impl` = (project in file("recommendation-impl"))
     )
   )
   .settings(lagomForkedTestSettings)
+  .settings(commonSettings)
   .settings(
     dockerCommands ++= Seq(
       Cmd("USER", "root"),
@@ -131,14 +162,19 @@ lazy val `graphql-gateway` = (project in file("graphql-gateway"))
       http4s,
       http4sCirce,
       http4sDsl,
+      zio,
+      catz,
+      pureconfig,
       circe,
       circeOptics,
-      sangria,
-      sangriaCirce,
+      caliban,
+      calibanHttp4s,
+      //calibanCats,
       discovery,
       discoveryKubernetes
     )
   )
+  .settings(commonSettings)
   .settings(
     assemblyMergeStrategy in assembly := {
       case PathList(ps@_*) if ps.last contains "reference-overrides.conf" => MergeStrategy.first

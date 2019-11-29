@@ -23,7 +23,7 @@ spec:
           image: book-impl:1.0-SNAPSHOT
           env:
             - name: "JAVA_OPTS"
-              value: "-Djava.util.logging.config.file=/opt/docker/conf/grpc-debug-logging.properties"
+              value: "-Djava.util.logging.org.sigurdthor.graphql.config.file=/opt/docker/conf/grpc-debug-logging.properties"
           ports:
             - name: http
               containerPort: 10000
