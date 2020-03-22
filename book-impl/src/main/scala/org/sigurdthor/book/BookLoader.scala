@@ -9,7 +9,8 @@ import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
 import org.sigurdthor.book.api.BookService
 import org.sigurdthor.book.domain.{BookEntity, BookSerializerRegistry}
-import org.sigurdthor.book.impl.{BookServiceGrpcImpl, BookServiceImpl}
+import org.sigurdthor.book.impl.{BookServiceGrpc, BookServiceImpl}
+import org.sigurdthor.book.lib.ZioRuntime
 import play.api.libs.ws.ahc.AhcWSComponents
 
 class BookLoader extends LagomApplicationLoader {
@@ -26,15 +27,18 @@ class BookLoader extends LagomApplicationLoader {
 abstract class BookApplication(context: LagomApplicationContext)
   extends LagomApplication(context)
     with CassandraPersistenceComponents
-    with AhcWSComponents {
+    with AhcWSComponents
+    with ZioRuntime {
 
   // Bind the service that this server provides
   override lazy val lagomServer: LagomServer = serverFor[BookService](wire[BookServiceImpl])
-    .additionalRouter(wire[BookServiceGrpcImpl])
 
   // Register the JSON serializer registry
   override lazy val jsonSerializerRegistry: JsonSerializerRegistry = BookSerializerRegistry
 
+  override lazy val bookService: BookServiceGrpc = wire[BookServiceGrpc]
+
   // Register the book-shelf persistent entity
   persistentEntityRegistry.register(wire[BookEntity])
+  runServer
 }

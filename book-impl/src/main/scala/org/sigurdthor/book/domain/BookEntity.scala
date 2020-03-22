@@ -46,7 +46,6 @@ class BookEntity extends PersistentEntity {
         state.copy(isbn = isbn, title = title, authors = authors, description = description)
     }
   }
-
 }
 
 

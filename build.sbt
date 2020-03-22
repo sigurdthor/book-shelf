@@ -1,68 +1,61 @@
-import akka.grpc.gen.scaladsl.play.{PlayScalaClientCodeGenerator, PlayScalaServerCodeGenerator}
 import com.typesafe.sbt.packager.docker.Cmd
+import sbt.Keys.libraryDependencies
 
 organization in ThisBuild := "org.sigurdthor"
 version in ThisBuild := "1.0-SNAPSHOT"
 
 // the Scala version that will be used for cross-compiled libraries
-scalaVersion in ThisBuild := "2.12.10"
+scalaVersion in ThisBuild := "2.13.1"
 
-val macwire = "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided"
-val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % Test
-val zio = "dev.zio" %% "zio" % "1.0.0-RC17"
-val catz = "dev.zio"               %% "zio-interop-cats"    % "2.0.0.0-RC8"
-val cats = "org.typelevel" %% "cats-core" % "2.0.0"
-val Http4sVersion = "0.21.0-M5"
-val CirceVersion = "0.11.1"
+val macwire = "com.softwaremill.macwire" %% "macros" % "2.3.3" % "provided"
+val scalaTest = "org.scalatest" %% "scalatest" % "3.1.1" % Test
+val zio = "dev.zio" %% "zio" % "1.0.0-RC18"
+val catz = "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC12"
+val cats = "org.typelevel" %% "cats-core" % "2.1.1"
+val Http4sVersion = "0.21.1"
+val CirceVersion = "0.13.0"
 
 val http4s = "org.http4s" %% "http4s-blaze-server" % Http4sVersion
 val http4sCirce = "org.http4s" %% "http4s-circe" % Http4sVersion
 val http4sDsl = "org.http4s" %% "http4s-dsl" % Http4sVersion
+
 val circe = "io.circe" %% "circe-generic" % CirceVersion
-val circeOptics = "io.circe" %% "circe-optics" % "0.9.3"
-val alpnVersion = "2.0.9"
-val caliban = "com.github.ghostdogpr" %% "caliban" % "0.3.0"
-val calibanHttp4s = "com.github.ghostdogpr" %% "caliban-http4s" % "0.3.0"
-val calibanCats  = "com.github.ghostdogpr" %% "caliban-cats"   % "0.3.0"
+val circeOptics = "io.circe" %% "circe-optics" % "0.13.0"
 
-val playJsonDerivedCodecs = "org.julienrf" %% "play-json-derived-codecs" % "4.0.0"
+val caliban = "com.github.ghostdogpr" %% "caliban" % "0.7.1"
+val calibanHttp4s = "com.github.ghostdogpr" %% "caliban-http4s" % "0.7.1"
+val calibanCats = "com.github.ghostdogpr" %% "caliban-cats" % "0.7.1"
 
-val discovery = "com.typesafe.akka" %% "akka-discovery" % "2.5.25"
-val discoveryLagom = "com.lightbend.lagom" %% "lagom-scaladsl-akka-discovery-service-locator" % "1.5.3"
-val discoveryKubernetes = "com.lightbend.akka.discovery" %% "akka-discovery-kubernetes-api" % "1.0.3"
+val playJsonDerivedCodecs = "org.julienrf" %% "play-json-derived-codecs" % "7.0.0"
 
-val pureconfig =  "com.github.pureconfig" %% "pureconfig"          % "0.12.1"
-val agensGraph = "net.bitnine" % "agensgraph-jdbc" % "1.4.2"
+val discovery = "com.typesafe.akka" %% "akka-discovery" % "2.6.4"
+val discoveryLagom = "com.lightbend.lagom" %% "lagom-scaladsl-akka-discovery-service-locator" % "1.6.1"
+val discoveryKubernetes = "com.lightbend.akka.discovery" %% "akka-discovery-kubernetes-api" % "1.0.5"
+
+val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.12.3"
+val logstage = "io.7mind.izumi" %% "logstage-core" % "0.10.2"
+
+val grpcVersion = "1.28.0"
 
 lazy val `book-shelf` = (project in file("."))
-  .aggregate(`book-api`, `book-impl`, `graphql-gateway`, `recommendation-api`, `recommendation-impl`)
-
-lagomServiceEnableSsl in ThisBuild := true
+  .aggregate(`book-api`, `book-impl`, `graphql-gateway`)
 
 val commonSettings = Def.settings(
+  resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   scalacOptions ++= Seq(
+    "-feature",
     "-deprecation",
+    "-explaintypes",
+    "-unchecked",
     "-encoding",
     "UTF-8",
-    "-explaintypes",
-    "-Yrangepos",
-    "-feature",
     "-language:higherKinds",
     "-language:existentials",
-    "-unchecked",
-    "-Xlint:_,-type-parameter-shadow",
-    "-Ywarn-numeric-widen",
-    "-Ywarn-unused:patvars,-implicits",
+    "-Xlint:-infer-any,_",
     "-Ywarn-value-discard",
-    "-Ypartial-unification",
+    "-Ywarn-numeric-widen",
     "-Ywarn-extra-implicit",
-    "-Ywarn-inaccessible",
-    "-Ywarn-infer-any",
-    "-Ywarn-nullary-override",
-    "-Ywarn-nullary-unit",
-    "-opt-inline-from:<source>",
-    "-opt-warnings",
-    "-opt:l:inline"
+    "-Ywarn-unused:_"
   )
 )
 
@@ -75,23 +68,15 @@ lazy val `book-api` = (project in file("book-api"))
     )
   )
 
-lazy val `recommendation-api` = (project in file("recommendation-api"))
-  .settings(
-    libraryDependencies ++= Seq(
-      lagomScaladslApi,
-      cats
-    )
-  )
-
 lazy val `book-impl` = (project in file("book-impl"))
   .enablePlugins(LagomScala)
-  .enablePlugins(AkkaGrpcPlugin, DockerPlugin, JavaAppPackaging)
-  .enablePlugins(PlayAkkaHttp2Support)
+  .enablePlugins(DockerPlugin, JavaAppPackaging)
   .settings(
     libraryDependencies ++= Seq(
       lagomScaladslPersistenceCassandra,
       lagomScaladslKafkaBroker,
       lagomScaladslTestKit,
+      logstage,
       zio,
       macwire,
       scalaTest,
@@ -110,81 +95,48 @@ lazy val `book-impl` = (project in file("book-impl"))
       ),
       Cmd("USER", "1001")
     ),
-    akkaGrpcGeneratedLanguages := Seq(AkkaGrpc.Scala),
-    akkaGrpcGeneratedSources := Seq(AkkaGrpc.Server),
-    akkaGrpcExtraGenerators in Compile += PlayScalaServerCodeGenerator,
-    lagomServiceHttpsPort := 8443,
-    lagomServiceAddress := "0.0.0.0"
+    PB.targets in Compile := Seq(
+      scalapb.gen(grpc = true) -> (sourceManaged in Compile).value,
+      scalapb.zio_grpc.ZioCodeGenerator -> (sourceManaged in Compile).value,
+    ),
+    libraryDependencies ++= Seq(
+      "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,
+      "io.grpc" % "grpc-netty" % grpcVersion
+    )
   )
   .dependsOn(`book-api`)
 
-lazy val `recommendation-impl` = (project in file("recommendation-impl"))
-  .enablePlugins(LagomScala)
-  .enablePlugins(AkkaGrpcPlugin, DockerPlugin, JavaAppPackaging)
-  .enablePlugins(PlayAkkaHttp2Support)
-  .settings(
-    libraryDependencies ++= Seq(
-      lagomScaladslKafkaClient,
-      lagomScaladslTestKit,
-      zio,
-      macwire,
-      scalaTest,
-      agensGraph,
-      discoveryLagom,
-      discoveryKubernetes
-    )
-  )
-  .settings(lagomForkedTestSettings)
-  .settings(commonSettings)
-  .settings(
-    dockerCommands ++= Seq(
-      Cmd("USER", "root"),
-      Cmd(
-        "RUN",
-        "chmod -R u+rwx,g+rwx,o+rwx /opt/docker"
-      ),
-      Cmd("USER", "1001")
-    ),
-    akkaGrpcGeneratedLanguages := Seq(AkkaGrpc.Scala),
-    akkaGrpcGeneratedSources := Seq(AkkaGrpc.Server),
-    akkaGrpcExtraGenerators in Compile += PlayScalaServerCodeGenerator,
-    lagomServiceHttpsPort := 8445,
-    lagomServiceAddress := "0.0.0.0"
-  )
-  .dependsOn(`recommendation-api`, `book-api`)
+
 
 lazy val `graphql-gateway` = (project in file("graphql-gateway"))
-  .enablePlugins(AkkaGrpcPlugin, JavaAppPackaging, DockerPlugin, JavaAgent)
-  .enablePlugins(PlayAkkaHttp2Support)
+  .enablePlugins(JavaAppPackaging, DockerPlugin)
   .settings(
-    javaAgents += "org.mortbay.jetty.alpn" % "jetty-alpn-agent" % alpnVersion % "runtime",
     libraryDependencies ++= Seq(
       http4s,
       http4sCirce,
       http4sDsl,
-      zio,
+      logstage,
       catz,
+      zio,
       pureconfig,
       circe,
       circeOptics,
       caliban,
       calibanHttp4s,
-      //calibanCats,
       discovery,
       discoveryKubernetes
     )
   )
   .settings(commonSettings)
   .settings(
-    assemblyMergeStrategy in assembly := {
-      case PathList(ps@_*) if ps.last contains "reference-overrides.conf" => MergeStrategy.first
-      case x =>
-        val oldStrategy = (assemblyMergeStrategy in assembly).value
-        oldStrategy(x)
-    },
-    akkaGrpcGeneratedLanguages := Seq(AkkaGrpc.Scala),
-    akkaGrpcGeneratedSources := Seq(AkkaGrpc.Client),
-    akkaGrpcExtraGenerators in Compile += PlayScalaClientCodeGenerator
+    PB.targets in Compile := Seq(
+      scalapb.gen(grpc = true) -> (sourceManaged in Compile).value,
+      scalapb.zio_grpc.ZioCodeGenerator -> (sourceManaged in Compile).value,
+    ),
+    libraryDependencies ++= Seq(
+      "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,
+      "io.grpc" % "grpc-netty" % grpcVersion
+    )
   )
 
 //lagomServiceLocatorEnabled in ThisBuild := false
