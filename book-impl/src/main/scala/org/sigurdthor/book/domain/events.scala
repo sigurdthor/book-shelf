@@ -18,7 +18,7 @@ object events {
     implicit val format: Format[BookEvent] = derived.flat.oformat((__ \ "type").format[String])
   }
 
-  case class BookAdded(isbn: ISBN, title: Title, authors: Seq[Author], description: Description) extends BookEvent
+  case class BookAdded(isbn: String, title: Title, authors: Seq[Author], description: Description) extends BookEvent
 
   object BookAdded {
     implicit val format: Format[BookAdded] = Json.format

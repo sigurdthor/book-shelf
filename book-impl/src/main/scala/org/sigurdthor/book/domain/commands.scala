@@ -13,8 +13,8 @@ object commands {
 
   case class AddBook(title: Title, authors: Seq[Author], description: Description) extends BookCommand[Done]
 
-  case object GetBookCommand extends BookCommand[Book] {
-    implicit val format: Format[GetBookCommand.type] = singletonFormat(GetBookCommand)
+  case object GetBook extends BookCommand[Book] {
+    implicit val format: Format[GetBook.type] = singletonFormat(GetBook)
   }
 
   object AddBook {

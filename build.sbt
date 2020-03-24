@@ -34,6 +34,10 @@ val discoveryKubernetes = "com.lightbend.akka.discovery" %% "akka-discovery-kube
 
 val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.12.3"
 val logstage = "io.7mind.izumi" %% "logstage-core" % "0.10.2"
+val chimney = "io.scalaland" %% "chimney" % "0.5.0"
+
+val logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
+val scalaLogger = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 
 val grpcVersion = "1.28.0"
 
@@ -77,7 +81,10 @@ lazy val `book-impl` = (project in file("book-impl"))
       lagomScaladslKafkaBroker,
       lagomScaladslTestKit,
       logstage,
+      logback,
+      scalaLogger,
       zio,
+      chimney,
       macwire,
       scalaTest,
       discoveryLagom,
@@ -118,6 +125,7 @@ lazy val `graphql-gateway` = (project in file("graphql-gateway"))
       logstage,
       catz,
       zio,
+      chimney,
       pureconfig,
       circe,
       circeOptics,

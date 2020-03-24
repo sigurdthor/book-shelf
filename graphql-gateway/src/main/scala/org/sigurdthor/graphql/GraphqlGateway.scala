@@ -15,12 +15,13 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import org.sigurdthor.bookshelf.grpc.bookservice.ZioBookservice.BookServiceClient
 import org.sigurdthor.bookshelf.grpc.bookservice._
 import org.sigurdthor.graphql.config.AppConfig
-import org.sigurdthor.graphql.model.{AddBookArgs, Mutations, Queries}
+import org.sigurdthor.graphql.model.{AddBookArgs, GetBookArgs, Mutations, Queries}
 import pureconfig.ConfigSource
 import scalapb.zio_grpc.ZManagedChannel
 import zio._
 import zio.console.putStrLn
 import zio.interop.catz._
+import org.sigurdthor.graphql.model.Transformations._
 
 object GqlSchema extends GenericSchema[BookServiceClient] {
 
@@ -28,8 +29,10 @@ object GqlSchema extends GenericSchema[BookServiceClient] {
 
   implicit val byteStringSchema: Schema[BookServiceClient, ByteString] = Schema.stringSchema.contramap(_.toStringUtf8)
 
-  implicit val addBookResonseSchema: GqlSchema.Typeclass[AddBookResponse] = gen[AddBookResponse]
+  implicit val addBookResponseSchema: GqlSchema.Typeclass[AddBookResponse] = gen[AddBookResponse]
+  implicit val bookResponseSchema: GqlSchema.Typeclass[BookResponse] = gen[BookResponse]
   implicit val addBookArgsSchema: GqlSchema.Typeclass[AddBookArgs] = gen[AddBookArgs]
+  implicit val getBookArgsSchema: GqlSchema.Typeclass[GetBookArgs] = gen[GetBookArgs]
 }
 
 object GraphqlGateway extends CatsApp {
@@ -53,10 +56,13 @@ object GraphqlGateway extends CatsApp {
       cfg <- ZIO.fromEither(ConfigSource.default.load[AppConfig])
       schema = graphQL(
         RootResolver(
-          Queries(),
+          Queries(args =>
+            log.debug(s"Perorming query with args $args") *>
+              BookServiceClient.getBook(GetBookRequest(args.isbn))
+                .mapError(_.asException())),
           Mutations(args =>
-            log.debug(s"Perorming request with args $args") *>
-              BookServiceClient.addBook(AddBookRequest(args.isbn, args.title, args.authors, args.description))
+            log.debug(s"Perorming mutation with args $args") *>
+              BookServiceClient.addBook(args.toRequest)
                 .mapError(_.asException()))
         ))
       interpreter <- schema.interpreter.map(_.provideCustomLayer(clientLayer))
