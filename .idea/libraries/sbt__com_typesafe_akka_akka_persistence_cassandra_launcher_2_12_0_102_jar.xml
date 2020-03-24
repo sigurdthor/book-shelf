@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="sbt: com.typesafe.akka:akka-persistence-cassandra-launcher_2.12:0.102:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/com/typesafe/akka/akka-persistence-cassandra-launcher_2.12/0.102/akka-persistence-cassandra-launcher_2.12-0.102.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/com/typesafe/akka/akka-persistence-cassandra-launcher_2.12/0.102/akka-persistence-cassandra-launcher_2.12-0.102-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/com/typesafe/akka/akka-persistence-cassandra-launcher_2.12/0.102/akka-persistence-cassandra-launcher_2.12-0.102-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

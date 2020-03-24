@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="sbt: dev.zio:izumi-reflect_2.13:0.12.0-M0:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/0.12.0-M0/izumi-reflect_2.13-0.12.0-M0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/0.12.0-M0/izumi-reflect_2.13-0.12.0-M0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/0.12.0-M0/izumi-reflect_2.13-0.12.0-M0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

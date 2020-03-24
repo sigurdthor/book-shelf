@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="sbt: com.thesamet.scalapb.zio-grpc:zio-grpc-core_2.13:0.1.0+9-10fac945-SNAPSHOT:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/oss.sonatype.org/content/repositories/snapshots/com/thesamet/scalapb/zio-grpc/zio-grpc-core_2.13/0.1.0%2B9-10fac945-SNAPSHOT/zio-grpc-core_2.13-0.1.0%2B9-10fac945-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/oss.sonatype.org/content/repositories/snapshots/com/thesamet/scalapb/zio-grpc/zio-grpc-core_2.13/0.1.0%2B9-10fac945-SNAPSHOT/zio-grpc-core_2.13-0.1.0%2B9-10fac945-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/oss.sonatype.org/content/repositories/snapshots/com/thesamet/scalapb/zio-grpc/zio-grpc-core_2.13/0.1.0%2B9-10fac945-SNAPSHOT/zio-grpc-core_2.13-0.1.0%2B9-10fac945-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

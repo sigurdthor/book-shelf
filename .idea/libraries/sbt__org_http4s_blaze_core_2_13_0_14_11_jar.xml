@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="sbt: org.http4s:blaze-core_2.13:0.14.11:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/blaze-core_2.13/0.14.11/blaze-core_2.13-0.14.11.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/blaze-core_2.13/0.14.11/blaze-core_2.13-0.14.11-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/http4s/blaze-core_2.13/0.14.11/blaze-core_2.13-0.14.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Play2ExcludedModulesSettings">
+    <option name="INFO">
+      <map>
+        <entry key="book-impl">
+          <value>
+            <ProjectSettingsEntry>
+              <option name="sourceDir" value="$PROJECT_DIR$/book-impl/src/main" />
+              <option name="uri" value="$PROJECT_DIR$/book-impl" />
+            </ProjectSettingsEntry>
+          </value>
+        </entry>
+        <entry key="book-shelf">
+          <value>
+            <ProjectSettingsEntry>
+              <option name="playDistrPath" value="$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/com/typesafe/play/play_2.12/2.8.1/play_2.12-2.8.1.jar" />
+            </ProjectSettingsEntry>
+          </value>
+        </entry>
+        <entry key="graphql-gateway">
+          <value>
+            <ProjectSettingsEntry>
+              <option name="sourceDir" value="$PROJECT_DIR$/graphql-gateway/src/main" />
+              <option name="uri" value="$PROJECT_DIR$/graphql-gateway" />
+            </ProjectSettingsEntry>
+          </value>
+        </entry>
+        <entry key="recommendation-impl">
+          <value>
+            <ProjectSettingsEntry>
+              <option name="sourceDir" value="$PROJECT_DIR$/recommendation-impl/src/main" />
+              <option name="uri" value="$PROJECT_DIR$/recommendation-impl" />
+            </ProjectSettingsEntry>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
