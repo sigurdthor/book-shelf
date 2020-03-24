@@ -9,6 +9,9 @@ package book;
 service BookService {
     rpc addBook (AddBookRequest) returns (AddBookResponse) {
     }
+
+    rpc getBook (GetBookRequest) returns (BookResponse) {
+    }
 }
 
 message AddBookRequest {
@@ -20,4 +23,15 @@ message AddBookRequest {
 
 message AddBookResponse {
     string addedAt = 1;
+}
+
+message BookResponse {
+    string isbn = 1;
+    string title = 2;
+    repeated string authors = 3;
+    string description = 4;
+}
+
+message GetBookRequest {
+    string isbn = 1;
 }

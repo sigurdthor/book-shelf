@@ -33,5 +33,4 @@ object model {
   object Description {
     implicit val format: Format[Description] = Json.format
   }
-
 }

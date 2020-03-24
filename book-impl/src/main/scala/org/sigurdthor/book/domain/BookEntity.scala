@@ -2,10 +2,11 @@ package org.sigurdthor.book.domain
 
 import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity
-import org.sigurdthor.book.api.domain.model.{Author, Description, ISBN, Title}
-import org.sigurdthor.book.domain.commands.{AddBook, BookCommand}
+import org.sigurdthor.book.api.domain.model._
+import org.sigurdthor.book.domain.commands.{AddBook, BookCommand, GetBook}
 import org.sigurdthor.book.domain.events.{BookAdded, BookEvent}
 import play.api.libs.json.{Format, Json}
+import org.sigurdthor.book.lib.Transformations._
 
 
 class BookEntity extends PersistentEntity {
@@ -19,6 +20,7 @@ class BookEntity extends PersistentEntity {
   override def behavior: Behavior = { _ =>
     Actions()
       .orElse(CommandHandler.addBook)
+      .orElse(CommandHandler.getBook)
       .orElse(EventHandler.bookAdded)
   }
 
@@ -28,7 +30,7 @@ class BookEntity extends PersistentEntity {
       case (AddBook(title, authors, description), ctx, _) =>
         ctx.thenPersist(
           BookAdded(
-            ISBN(entityId),
+            entityId,
             title,
             authors,
             description
@@ -37,23 +39,29 @@ class BookEntity extends PersistentEntity {
           _ => ctx.reply(Done)
         )
     }
+
+    def getBook: Actions = Actions().onReadOnlyCommand[GetBook.type, Book] {
+      case (GetBook, ctx, state) =>
+        ctx.reply(state.toBook(entityId))
+    }
   }
 
   private object EventHandler {
 
     def bookAdded: Actions = Actions().onEvent {
-      case (BookAdded(isbn, title, authors, description), state) =>
-        state.copy(isbn = isbn, title = title, authors = authors, description = description)
+      case (BookAdded(_, title, authors, description), state) =>
+        state.copy(title = title, authors = authors, description = description)
     }
   }
+
 }
 
 
-case class BookState(isbn: ISBN, title: Title, authors: Seq[Author], description: Description)
+case class BookState(title: Title, authors: Seq[Author], description: Description)
 
 object BookState {
 
-  def empty = BookState(ISBN(""), Title(""), List(), Description(""))
+  def empty = BookState(Title(""), List(), Description(""))
 
   implicit val format: Format[BookState] = Json.format
 }
