@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/book-api.iml" filepath="$PROJECT_DIR$/.idea/modules/book-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/book-impl.iml" filepath="$PROJECT_DIR$/.idea/modules/book-impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/book-shelf.iml" filepath="$PROJECT_DIR$/.idea/modules/book-shelf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/book-shelf-build.iml" filepath="$PROJECT_DIR$/.idea/modules/book-shelf-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/graphql-gateway.iml" filepath="$PROJECT_DIR$/.idea/modules/graphql-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lagom-internal-meta-project-cassandra.iml" filepath="$PROJECT_DIR$/.idea/modules/lagom-internal-meta-project-cassandra.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lagom-internal-meta-project-kafka.iml" filepath="$PROJECT_DIR$/.idea/modules/lagom-internal-meta-project-kafka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lagom-internal-meta-project-service-locator.iml" filepath="$PROJECT_DIR$/.idea/modules/lagom-internal-meta-project-service-locator.iml" />
+    </modules>
+  </component>
+</project>

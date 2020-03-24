@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="sbt: com.github.jnr:jffi:1.2.22:native:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jffi/1.2.22/jffi-1.2.22-native.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

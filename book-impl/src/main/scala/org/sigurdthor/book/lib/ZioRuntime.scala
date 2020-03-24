@@ -23,7 +23,7 @@ trait ZioRuntime {
   def serverLive(port: Int) =
     Clock.live >>> bookService.live >>> Server.live[BookService](ServerBuilder.forPort(port))
 
-  def runServer = {
+  def runServer() = {
     val runtime = Runtime(Clock, Platform.default)
     runtime.unsafeRunAsync_(serverWait.provideLayer(serverLive(8900) ++ Console.live ++ Clock.live))
   }

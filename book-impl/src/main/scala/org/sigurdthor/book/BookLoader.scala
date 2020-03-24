@@ -40,5 +40,5 @@ abstract class BookApplication(context: LagomApplicationContext)
 
   // Register the book-shelf persistent entity
   persistentEntityRegistry.register(wire[BookEntity])
-  runServer
+  runServer()
 }

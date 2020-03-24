@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="sbt: com.github.jnr:jnr-posix:3.0.45:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-posix/3.0.45/jnr-posix-3.0.45.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-posix/3.0.45/jnr-posix-3.0.45-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-posix/3.0.45/jnr-posix-3.0.45-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

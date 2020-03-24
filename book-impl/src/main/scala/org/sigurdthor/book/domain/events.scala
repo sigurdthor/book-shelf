@@ -2,7 +2,7 @@ package org.sigurdthor.book.domain
 
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventShards, AggregateEventTag}
 import julienrf.json.derived
-import org.sigurdthor.book.api.domain.model.{Author, Description, ISBN, Title}
+import org.sigurdthor.book.api.domain.model.{Author, Description, Title}
 import play.api.libs.json.{Format, Json, __}
 
 object events {

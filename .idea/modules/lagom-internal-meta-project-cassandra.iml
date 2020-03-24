@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="lagom-internal-meta-project-cassandra [file:/home/sigurd/projects/book-shelf/]" external.linked.project.path="$MODULE_DIR$/../../target/lagom-dynamic-projects/lagom-internal-meta-project-cassandra" external.root.project.path="$MODULE_DIR$/../.." external.system.id="SBT" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
+    <output url="file://$MODULE_DIR$/../../target/lagom-dynamic-projects/lagom-internal-meta-project-cassandra/target/scala-2.12/classes" />
+    <output-test url="file://$MODULE_DIR$/../../target/lagom-dynamic-projects/lagom-internal-meta-project-cassandra/target/scala-2.12/test-classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../target/lagom-dynamic-projects/lagom-internal-meta-project-cassandra">
+      <excludeFolder url="file://$MODULE_DIR$/../../target/lagom-dynamic-projects/lagom-internal-meta-project-cassandra/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-java8-compat_2.12:0.8.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.slf4j:slf4j-api:1.7.25:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-parser-combinators_2.12:1.1.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-lang:scala-library:2.12.10:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.codehaus.mojo:animal-sniffer-annotations:1.18:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.checkerframework:checker-qual:2.8.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.agrona:agrona:0.9.31:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.netty:netty-transport:4.0.56.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.netty:netty-handler:4.0.56.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.netty:netty-common:4.0.56.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.netty:netty-codec:4.0.56.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.netty:netty-buffer:4.0.56.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.dropwizard.metrics:metrics-core:3.2.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.aeron:aeron-driver:1.15.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.aeron:aeron-client:1.15.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-stream_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-remote_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-protobuf_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-persistence_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-persistence-query_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-persistence-cassandra_2.12:0.102:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-persistence-cassandra-launcher_2.12:0.102:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-coordination_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-cluster_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-cluster-tools_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-actor_2.12:2.5.23:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe:ssl-config-core_2.12:0.3.7:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe:config:1.3.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lightbend.lagom:lagom-cassandra-server_2.12:1.6.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.google.j2objc:j2objc-annotations:1.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.google.guava:guava:28.1-jre:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.google.errorprone:error_prone_annotations:2.3.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jnr:jnr-posix:3.0.45:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jnr:jnr-ffi:2.1.8:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jnr:jnr-constants:0.9.9:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jnr:jffi:1.2.17:native:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jnr:jffi:1.2.17:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.datastax.cassandra:cassandra-driver-core:3.7.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.github.jnr:jnr-x86asm:1.0.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.google.code.findbugs:jsr305:3.0.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.google.guava:failureaccess:1.0.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.netty:netty:3.10.6.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.ow2.asm:asm:5.0.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.ow2.asm:asm-analysis:5.0.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.ow2.asm:asm-commons:5.0.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.ow2.asm:asm-tree:5.0.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.ow2.asm:asm-util:5.0.3:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.reactivestreams:reactive-streams:1.0.2:jar" level="project" />
+  </component>
+</module>

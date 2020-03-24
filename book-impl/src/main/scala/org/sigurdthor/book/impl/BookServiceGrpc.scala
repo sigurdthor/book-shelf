@@ -19,11 +19,9 @@ import org.sigurdthor.bookshelf.grpc.bookservice._
 import zio.clock.Clock
 import zio.{Has, IO, ZLayer}
 
-import scala.concurrent.ExecutionContext
-
 
 class BookServiceGrpc(persistentEntityRegistry: PersistentEntityRegistry)
-                     (implicit ec: ExecutionContext, validator: Validator[Book]) {
+                     (implicit validator: Validator[Book]) {
 
   type BookServiceM = Has[ZioBookservice.BookService]
 

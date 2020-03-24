@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ScalaCompilerConfiguration">
+    <profile name="sbt 1" modules="book-api,book-shelf,book-shelf_8204,lagom-internal-meta-project-cassandra,lagom-internal-meta-project-kafka,lagom-internal-meta-project-service-locator,recommendation-api" />
+    <profile name="sbt 2" modules="recommendation-impl">
+      <option name="higherKinds" value="true" />
+      <option name="existentials" value="true" />
+      <option name="deprecationWarnings" value="true" />
+      <option name="uncheckedWarnings" value="true" />
+      <option name="featureWarnings" value="true" />
+      <option name="explainTypeErrors" value="true" />
+      <parameters>
+        <parameter value="-encoding" />
+        <parameter value="utf8" />
+        <parameter value="-encoding" />
+        <parameter value="UTF-8" />
+        <parameter value="-Yrangepos" />
+        <parameter value="-Xlint:_,-type-parameter-shadow" />
+        <parameter value="-Ywarn-numeric-widen" />
+        <parameter value="-Ywarn-unused:patvars,-implicits" />
+        <parameter value="-Ywarn-value-discard" />
+        <parameter value="-Ypartial-unification" />
+        <parameter value="-Ywarn-extra-implicit" />
+        <parameter value="-Ywarn-inaccessible" />
+        <parameter value="-Ywarn-infer-any" />
+        <parameter value="-Ywarn-nullary-override" />
+        <parameter value="-Ywarn-nullary-unit" />
+        <parameter value="-opt-inline-from:&lt;source&gt;" />
+        <parameter value="-opt-warnings" />
+        <parameter value="-opt:l:inline" />
+      </parameters>
+    </profile>
+    <profile name="sbt 4" modules="book-impl,graphql-gateway">
+      <option name="higherKinds" value="true" />
+      <option name="existentials" value="true" />
+      <option name="deprecationWarnings" value="true" />
+      <option name="uncheckedWarnings" value="true" />
+      <option name="featureWarnings" value="true" />
+      <option name="explainTypeErrors" value="true" />
+      <parameters>
+        <parameter value="-encoding" />
+        <parameter value="UTF-8" />
+        <parameter value="-Xlint:-infer-any,_" />
+        <parameter value="-Ywarn-value-discard" />
+        <parameter value="-Ywarn-numeric-widen" />
+        <parameter value="-Ywarn-extra-implicit" />
+        <parameter value="-Ywarn-unused:_" />
+      </parameters>
+    </profile>
+  </component>
+</project>
