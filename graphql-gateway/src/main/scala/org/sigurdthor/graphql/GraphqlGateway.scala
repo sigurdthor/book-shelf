@@ -1,71 +1,66 @@
 package org.sigurdthor.graphql
 
-import caliban.GraphQL._
+import caliban.GraphQL.graphQL
 import caliban.schema.{GenericSchema, Schema}
 import caliban.{GraphQLInterpreter, Http4sAdapter, RootResolver}
 import com.google.protobuf.ByteString
-import io.grpc.ManagedChannelBuilder
-import izumi.logstage.api.IzLogger
-import izumi.logstage.api.Log.Level.Trace
-import izumi.logstage.sink.ConsoleSink
-import logstage.{LogBIO, LogstageZIO}
 import org.http4s.implicits._
 import org.http4s.server.Router
 import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.server.middleware.CORS
 import org.sigurdthor.bookshelf.grpc.bookservice.ZioBookservice.BookServiceClient
-import org.sigurdthor.bookshelf.grpc.bookservice._
+import org.sigurdthor.bookshelf.grpc.bookservice.{AddBookResponse, BookResponse, GetBookRequest}
+import org.sigurdthor.bookshelf.grpc.recommendationservice.{Recommendation, RecommendationRequest, RecommendationResponse}
+import org.sigurdthor.bookshelf.grpc.recommendationservice.ZioRecommendationservice.RecommendationServiceClient
+import org.sigurdthor.graphql.GraphqlGateway.Composite
 import org.sigurdthor.graphql.config.AppConfig
-import org.sigurdthor.graphql.model.{AddBookArgs, GetBookArgs, Mutations, Queries}
+import org.sigurdthor.graphql.model.GraphqlEntities.{AddBookArgs, GetBookArgs, Mutations, Queries, RecommendationsArgs}
 import pureconfig.ConfigSource
-import scalapb.zio_grpc.ZManagedChannel
 import zio._
 import zio.console.putStrLn
 import zio.interop.catz._
+import org.sigurdthor.graphql.service.GrpcLayer._
 import org.sigurdthor.graphql.model.Transformations._
+import org.sigurdthor.lib.Logger
 
-object GqlSchema extends GenericSchema[BookServiceClient] {
+object GraphqlSchema extends GenericSchema[Composite] with Logger {
 
-  implicit def seqSchema[A](implicit ev: Schema[BookServiceClient, A]): Schema[BookServiceClient, Seq[A]] = listSchema[A].contramap(_.toList)
+  implicit val byteStringSchema: Schema[Composite, ByteString] = Schema.stringSchema.contramap(_.toStringUtf8)
 
-  implicit val byteStringSchema: Schema[BookServiceClient, ByteString] = Schema.stringSchema.contramap(_.toStringUtf8)
+  implicit val addBookResponseSchema = gen[AddBookResponse]
+  implicit val bookResponseSchema = gen[BookResponse]
+  implicit val addBookArgsSchema = gen[AddBookArgs]
+  implicit val getBookArgsSchema = gen[GetBookArgs]
 
-  implicit val addBookResponseSchema: GqlSchema.Typeclass[AddBookResponse] = gen[AddBookResponse]
-  implicit val bookResponseSchema: GqlSchema.Typeclass[BookResponse] = gen[BookResponse]
-  implicit val addBookArgsSchema: GqlSchema.Typeclass[AddBookArgs] = gen[AddBookArgs]
-  implicit val getBookArgsSchema: GqlSchema.Typeclass[GetBookArgs] = gen[GetBookArgs]
+  implicit val recommendationResponseSchema = gen[RecommendationResponse]
+  implicit val recommendationSchema = gen[Recommendation]
+  implicit val recommendationsArgsSchema = gen[RecommendationsArgs]
+
+  val api = graphQL(
+    RootResolver(
+      Queries(args =>
+        BookServiceClient.getBook(GetBookRequest(args.isbn))
+          .mapError(_.asException()),
+        args => RecommendationServiceClient.searchForRecommendations(RecommendationRequest(args.query))
+          .mapError(_.asException())
+      ),
+      Mutations(args =>
+        log.debug(s"Mutation $args") *> BookServiceClient.addBook(args.toRequest)
+          .mapError(_.asException()))
+    ))
 }
 
 object GraphqlGateway extends CatsApp {
 
   type AppTask[A] = RIO[ZEnv, A]
+  type Composite = RecommendationServiceClient with BookServiceClient
 
-  import GqlSchema._
+  import GraphqlSchema._
 
-  lazy val textSink: ConsoleSink = ConsoleSink.text(colored = true)
-  lazy val izLogger: IzLogger = IzLogger(Trace, List(textSink))
-  lazy val log: LogBIO[IO] = LogstageZIO.withFiberId(izLogger)
-
-  def clientLayer: Layer[Throwable, BookServiceClient] = BookServiceClient.live(
-    ZManagedChannel(
-      ManagedChannelBuilder.forAddress("0.0.0.0", 8900).usePlaintext()
-    )
-  )
-
-  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
+  override def run(args: List[String]): ZIO[ZEnv, Nothing, Int] =
     (for {
       cfg <- ZIO.fromEither(ConfigSource.default.load[AppConfig])
-      schema = graphQL(
-        RootResolver(
-          Queries(args =>
-            log.debug(s"Perorming query with args $args") *>
-              BookServiceClient.getBook(GetBookRequest(args.isbn))
-                .mapError(_.asException())),
-          Mutations(args =>
-            log.debug(s"Perorming mutation with args $args") *>
-              BookServiceClient.addBook(args.toRequest)
-                .mapError(_.asException()))
-        ))
-      interpreter <- schema.interpreter.map(_.provideCustomLayer(clientLayer))
+      interpreter <- api.interpreter.map(_.provideCustomLayer(recommendationClientLayer ++ bookClientLayer))
       _ <- runHttp(cfg, interpreter)
     } yield 0).catchAll(err => putStrLn(err.toString).as(1))
 
@@ -75,7 +70,7 @@ object GraphqlGateway extends CatsApp {
         .bindHttp(cfg.http.port, cfg.http.host)
         .withHttpApp(
           Router(
-            "/api/graphql" -> Http4sAdapter.makeHttpService(interpreter)
+            "/api/graphql" -> CORS(Http4sAdapter.makeHttpService(interpreter))
           ).orNotFound
         )
         .resource

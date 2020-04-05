@@ -22,9 +22,9 @@ val http4sDsl = "org.http4s" %% "http4s-dsl" % Http4sVersion
 val circe = "io.circe" %% "circe-generic" % CirceVersion
 val circeOptics = "io.circe" %% "circe-optics" % "0.13.0"
 
-val caliban = "com.github.ghostdogpr" %% "caliban" % "0.7.1"
-val calibanHttp4s = "com.github.ghostdogpr" %% "caliban-http4s" % "0.7.1"
-val calibanCats = "com.github.ghostdogpr" %% "caliban-cats" % "0.7.1"
+val caliban = "com.github.ghostdogpr" %% "caliban" % "0.7.3"
+val calibanHttp4s = "com.github.ghostdogpr" %% "caliban-http4s" % "0.7.3"
+val calibanCats = "com.github.ghostdogpr" %% "caliban-cats" % "0.7.3"
 
 val playJsonDerivedCodecs = "org.julienrf" %% "play-json-derived-codecs" % "7.0.0"
 
@@ -36,13 +36,20 @@ val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.12.3"
 val logstage = "io.7mind.izumi" %% "logstage-core" % "0.10.2"
 val chimney = "io.scalaland" %% "chimney" % "0.5.0"
 
+val elastic4sVersion = "7.3.5"
+val elastic4s = "com.sksamuel.elastic4s" %% "elastic4s-core" % elastic4sVersion
+val esjava = "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % elastic4sVersion
+val esZio = "com.sksamuel.elastic4s" %% "elastic4s-effect-zio" % "7.3.5"
+val esCirce = "com.sksamuel.elastic4s" %% "elastic4s-json-circe" % "7.3.5"
+
+
 val logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
 val scalaLogger = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 
 val grpcVersion = "1.28.0"
 
 lazy val `book-shelf` = (project in file("."))
-  .aggregate(`book-api`, `book-impl`, `graphql-gateway`)
+  .aggregate(`book-api`, `book-impl`, `recommendation-api`, `recommendation-impl`, `graphql-gateway`, lib)
 
 val commonSettings = Def.settings(
   resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
@@ -63,6 +70,16 @@ val commonSettings = Def.settings(
   )
 )
 
+lazy val lib = (project in file("lib"))
+  .settings(
+    libraryDependencies ++= Seq(
+      logstage,
+      logback,
+      scalaLogger,
+      zio
+    )
+  )
+
 lazy val `book-api` = (project in file("book-api"))
   .settings(
     libraryDependencies ++= Seq(
@@ -80,9 +97,7 @@ lazy val `book-impl` = (project in file("book-impl"))
       lagomScaladslPersistenceCassandra,
       lagomScaladslKafkaBroker,
       lagomScaladslTestKit,
-      logstage,
-      logback,
-      scalaLogger,
+      pureconfig,
       zio,
       chimney,
       macwire,
@@ -111,9 +126,56 @@ lazy val `book-impl` = (project in file("book-impl"))
       "io.grpc" % "grpc-netty" % grpcVersion
     )
   )
-  .dependsOn(`book-api`)
+  .dependsOn(`book-api`, lib)
 
+lazy val `recommendation-api` = (project in file("recommendation-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslApi,
+      cats
+    )
+  )
 
+lazy val `recommendation-impl` = (project in file("recommendation-impl"))
+  .enablePlugins(LagomScala)
+  .enablePlugins(DockerPlugin, JavaAppPackaging)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslKafkaClient,
+      lagomScaladslTestKit,
+      zio,
+      macwire,
+      elastic4s,
+      esjava,
+      esZio,
+      esCirce,
+      pureconfig,
+      scalaTest,
+      discoveryLagom,
+      discoveryKubernetes
+    )
+  )
+  .settings(lagomForkedTestSettings)
+  .settings(commonSettings)
+  .settings(
+    dockerCommands ++= Seq(
+      Cmd("USER", "root"),
+      Cmd(
+        "RUN",
+        "chmod -R u+rwx,g+rwx,o+rwx /opt/docker"
+      ),
+      Cmd("USER", "1001")
+    ),
+    PB.targets in Compile := Seq(
+      scalapb.gen(grpc = true) -> (sourceManaged in Compile).value,
+      scalapb.zio_grpc.ZioCodeGenerator -> (sourceManaged in Compile).value,
+    ),
+    libraryDependencies ++= Seq(
+      "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,
+      "io.grpc" % "grpc-netty" % grpcVersion
+    )
+  )
+  .dependsOn(`recommendation-api`, `book-api`, lib)
 
 lazy val `graphql-gateway` = (project in file("graphql-gateway"))
   .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -122,7 +184,6 @@ lazy val `graphql-gateway` = (project in file("graphql-gateway"))
       http4s,
       http4sCirce,
       http4sDsl,
-      logstage,
       catz,
       zio,
       chimney,
@@ -145,6 +206,6 @@ lazy val `graphql-gateway` = (project in file("graphql-gateway"))
       "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,
       "io.grpc" % "grpc-netty" % grpcVersion
     )
-  )
+  ) .dependsOn(lib)
 
 //lagomServiceLocatorEnabled in ThisBuild := false

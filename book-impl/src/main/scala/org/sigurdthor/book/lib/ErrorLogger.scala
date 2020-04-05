@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object ErrorLoggers extends StrictLogging {
+object ErrorLogger extends StrictLogging {
 
   implicit class FutureLogger[T](f: Future[T])(implicit ec: ExecutionContext) {
 
