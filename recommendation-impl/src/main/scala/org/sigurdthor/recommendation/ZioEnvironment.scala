@@ -11,8 +11,7 @@ import org.sigurdthor.recommendation.repository.{ElasticConnection, Recommendati
 import pureconfig.ConfigSource
 import scalapb.zio_grpc.Server
 import zio.clock.Clock
-import zio.console.{Console, putStr, putStrLn}
-import zio.duration._
+import zio.console.{Console, putStrLn}
 import zio.{Runtime, ZIO}
 
 import scala.concurrent.ExecutionContext
@@ -21,10 +20,10 @@ import scala.concurrent.ExecutionContext
 class ZioEnvironment(recommendationService: RecommendationServiceGrpc, bookService: BookService)
                     (implicit val ec: ExecutionContext) extends ElasticConnection with StrictLogging {
 
-  def serverWait: ZIO[Console with Clock, Throwable, Unit] =
+  def service: ZIO[Console with EventsConsumer#BookEventConsumer, Throwable, Unit] =
     for {
-      _ <- putStrLn("Recommendation is running")
-      _ <- (putStr(".") *> ZIO.sleep(1.second)).forever
+      _ <- ZIO.accessM[EventsConsumer#BookEventConsumer](_.get.subscribeOnEvents)
+      _ <- putStrLn("Recommendation service is running")
     } yield ()
 
   def run() = {
@@ -35,8 +34,7 @@ class ZioEnvironment(recommendationService: RecommendationServiceGrpc, bookServi
         val grpcServerLayer = serviceLayer >>> Server.live[RecommendationService](ServerBuilder.forPort(cfg.grpc.port))
         val appLayer = grpcServerLayer ++ consumerLayer ++ Console.live ++ Clock.live
 
-        val app = serverWait.as(ZIO.accessM[EventsConsumer#BookEventConsumer](_.get.subscribeOnEvents))
-          .provideSomeLayer[zio.ZEnv](appLayer)
+        val app = service.provideSomeLayer[zio.ZEnv](appLayer)
 
         Runtime.default.unsafeRunAsync_(app)
 

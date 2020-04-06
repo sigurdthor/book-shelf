@@ -27,8 +27,8 @@ class BookServiceGrpc(persistentEntityRegistry: PersistentEntityRegistry)
 
         def addBook(req: AddBookRequest): IO[Status, AddBookResponse] = {
           val flow = for {
-            book <- log.debug(s"Add book $req") *> validator.validate(req.toBook)
-            _ <-  IO.fromFuture { implicit ec =>
+            book <- validator.validate(req.toBook)
+            _ <- IO.fromFuture { implicit ec =>
               bookEntityRef(book.isbn.value).ask(AddBook(book.title, book.authors, book.description)).logError
             } *> log.debug(s"Book ${req.isbn} has been added")
           } yield AddBookResponse(OffsetDateTime.now().toString)
