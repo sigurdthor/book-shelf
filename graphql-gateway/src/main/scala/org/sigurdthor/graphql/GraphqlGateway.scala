@@ -10,20 +10,19 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.middleware.CORS
 import org.sigurdthor.bookshelf.grpc.bookservice.ZioBookservice.BookServiceClient
 import org.sigurdthor.bookshelf.grpc.bookservice.{AddBookResponse, BookResponse, GetBookRequest}
-import org.sigurdthor.bookshelf.grpc.recommendationservice.{Recommendation, RecommendationRequest, RecommendationResponse}
 import org.sigurdthor.bookshelf.grpc.recommendationservice.ZioRecommendationservice.RecommendationServiceClient
+import org.sigurdthor.bookshelf.grpc.recommendationservice.{Recommendation, RecommendationRequest, RecommendationResponse}
 import org.sigurdthor.graphql.GraphqlGateway.Composite
 import org.sigurdthor.graphql.config.AppConfig
-import org.sigurdthor.graphql.model.GraphqlEntities.{AddBookArgs, GetBookArgs, Mutations, Queries, RecommendationsArgs}
+import org.sigurdthor.graphql.model.GraphqlEntities._
+import org.sigurdthor.graphql.model.Transformations._
+import org.sigurdthor.graphql.service.GrpcLayer._
 import pureconfig.ConfigSource
 import zio._
 import zio.console.putStrLn
 import zio.interop.catz._
-import org.sigurdthor.graphql.service.GrpcLayer._
-import org.sigurdthor.graphql.model.Transformations._
-import org.sigurdthor.lib.Logger
 
-object GraphqlSchema extends GenericSchema[Composite] with Logger {
+object GraphqlSchema extends GenericSchema[Composite] {
 
   implicit val byteStringSchema: Schema[Composite, ByteString] = Schema.stringSchema.contramap(_.toStringUtf8)
 
@@ -45,7 +44,7 @@ object GraphqlSchema extends GenericSchema[Composite] with Logger {
           .mapError(_.asException())
       ),
       Mutations(args =>
-        log.debug(s"Mutation $args") *> BookServiceClient.addBook(args.toRequest)
+        BookServiceClient.addBook(args.toRequest)
           .mapError(_.asException()))
     ))
 }

@@ -42,6 +42,7 @@ val esjava = "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % elastic4sVe
 val esZio = "com.sksamuel.elastic4s" %% "elastic4s-effect-zio" % "7.3.5"
 val esCirce = "com.sksamuel.elastic4s" %% "elastic4s-json-circe" % "7.3.5"
 
+val commonsLang = "org.apache.commons" % "commons-lang3" % "3.10"
 
 val logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
 val scalaLogger = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
@@ -76,6 +77,7 @@ lazy val lib = (project in file("lib"))
       logstage,
       logback,
       scalaLogger,
+      commonsLang,
       zio
     )
   )

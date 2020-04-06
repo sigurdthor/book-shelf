@@ -26,7 +26,7 @@ class EventsConsumer(bookService: BookService)(implicit val ec: ExecutionContext
   val live: ZLayer[RecommendationRepo, Nothing, BookEventConsumer] = ZLayer.fromService { repository =>
     new BookEventConsumer.Service {
       override def subscribeOnEvents: Task[Done] = {
-        log.debug("Subscribing on events") *> bookService.bookEvents.subscribe
+        bookService.bookEvents.subscribe
           .withGroupId("recommendation-service")
           .atLeastOnce(
             Flow[BookEventApi]
