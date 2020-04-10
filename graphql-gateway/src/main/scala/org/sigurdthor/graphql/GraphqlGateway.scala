@@ -21,6 +21,7 @@ import pureconfig.ConfigSource
 import zio._
 import zio.console.putStrLn
 import zio.interop.catz._
+import org.sigurdthor.graphql.service.ErrorHandler._
 
 object GraphqlSchema extends GenericSchema[Composite] {
 
@@ -60,7 +61,7 @@ object GraphqlGateway extends CatsApp {
     (for {
       cfg <- ZIO.fromEither(ConfigSource.default.load[AppConfig])
       interpreter <- api.interpreter.map(_.provideCustomLayer(recommendationClientLayer ++ bookClientLayer))
-      _ <- runHttp(cfg, interpreter)
+      _ <- runHttp(cfg, withErrorCodeExtensions(interpreter))
     } yield 0).catchAll(err => putStrLn(err.toString).as(1))
 
   private def runHttp(cfg: AppConfig, interpreter: GraphQLInterpreter[ZEnv, Throwable]): ZIO[ZEnv, Throwable, Unit] =

@@ -14,7 +14,7 @@ class RecommendationServiceGrpc {
       (request: RecommendationRequest) =>
         repository.findRecommendations(request.query)
           .bimap(
-            _ => Status.NOT_FOUND,
+            _ => Status.INTERNAL,
             RecommendationResponse(_)
           )
   }

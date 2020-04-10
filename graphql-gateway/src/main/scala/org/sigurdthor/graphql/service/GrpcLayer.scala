@@ -9,7 +9,7 @@ object GrpcLayer {
 
   lazy val bookClientLayer = BookServiceClient.live(
     ZManagedChannel(
-      ManagedChannelBuilder.forAddress("0.0.0.0", 8900).usePlaintext()
+      ManagedChannelBuilder.forAddress("0.0.0.0", 8909).usePlaintext()
     )
   )
 
