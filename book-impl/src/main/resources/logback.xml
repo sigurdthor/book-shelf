@@ -8,6 +8,8 @@
 		<immediateFlush>false</immediateFlush>
 	</appender>
 
+	<logger name="io.grpc" level="debug" />
+
 	<root level="INFO">
 		<appender-ref ref="CONSOLE" />
 	</root>
