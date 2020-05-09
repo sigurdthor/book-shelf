@@ -1,22 +1,26 @@
 package org.sigurdthor.book.lib
 
 import org.sigurdthor.book.api.domain.model.{Author, Book, Description, ISBN, Title}
-import org.sigurdthor.book.domain.BookState
+import org.sigurdthor.book.domain.{BookEntity}
 import io.scalaland.chimney.dsl._
+import org.sigurdthor.book.domain.commands.BookReply
 import org.sigurdthor.bookshelf.grpc.bookservice.{AddBookRequest, BookResponse}
 
 object Transformations {
 
-  implicit class StateTransformer(state: BookState) {
+  implicit class EntityTransformer(entity: BookEntity) {
 
-    def toBook(entityId: String): Book =
-      state
-        .into[Book]
-        .withFieldComputed(_.isbn, _ => ISBN(entityId))
+    def toReply(isbn: ISBN): BookReply =
+      entity
+        .into[BookReply]
+        .withFieldComputed(_.isbn, _ => isbn)
+        .withFieldComputed(_.title, _ => entity.title.get)
+        .withFieldComputed(_.authors, _ => entity.authors)
+        .withFieldComputed(_.description, _ => entity.description.get)
         .transform
   }
 
-  implicit class BookTransformer(book: Book) {
+  implicit class BookTransformer(book: BookReply) {
 
     def toResponse: BookResponse =
       book

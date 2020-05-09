@@ -1,24 +1,20 @@
 package org.sigurdthor.book.domain
 
-import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventShards, AggregateEventTag}
-import julienrf.json.derived
-import org.sigurdthor.book.api.domain.model.{Author, Description, Title}
+import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventShards, AggregateEventTag, AggregateEventTagger}
+import org.sigurdthor.book.api.domain.model.{Author, Description, ISBN, Title}
 import play.api.libs.json.{Format, Json, __}
 
 object events {
 
   sealed trait BookEvent extends AggregateEvent[BookEvent] {
-    def aggregateTag: AggregateEventShards[BookEvent] = BookEvent.Tag
+    override def aggregateTag: AggregateEventTagger[BookEvent] = BookEvent.Tag
   }
 
   object BookEvent {
-    val NumShards = 5
-    val Tag: AggregateEventShards[BookEvent] = AggregateEventTag.sharded[BookEvent](NumShards)
-
-    implicit val format: Format[BookEvent] = derived.flat.oformat((__ \ "type").format[String])
+    val Tag: AggregateEventShards[BookEvent] = AggregateEventTag.sharded[BookEvent](numShards = 10)
   }
 
-  case class BookAdded(isbn: String, title: Title, authors: Seq[Author], description: Description) extends BookEvent
+  case class BookAdded(isbn: ISBN, title: Title, authors: Seq[Author], description: Description) extends BookEvent
 
   object BookAdded {
     implicit val format: Format[BookAdded] = Json.format

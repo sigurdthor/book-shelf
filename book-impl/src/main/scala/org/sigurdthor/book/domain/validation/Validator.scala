@@ -1,7 +1,7 @@
 package org.sigurdthor.book.domain.validation
 
 import org.sigurdthor.book.api.domain.model.Book
-import org.sigurdthor.book.domain.model.{FieldIsEmpty, ServiceError, isbn}
+import org.sigurdthor.book.domain.errors.{FieldIsEmpty, ServiceError, isbn}
 import zio.IO
 
 trait Validator[T] {

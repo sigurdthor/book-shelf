@@ -1,26 +1,28 @@
 package org.sigurdthor.book.impl
 
-import java.time.OffsetDateTime
-
-import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
+import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, EntityRef}
+import akka.util.Timeout
 import io.grpc.Status
 import org.sigurdthor.book.api.domain.model._
 import org.sigurdthor.book.domain.BookEntity
-import org.sigurdthor.book.domain.commands.{AddBook, GetBook}
-import org.sigurdthor.book.domain.model.FieldIsEmpty
+import org.sigurdthor.book.domain.commands._
+import org.sigurdthor.book.domain.errors.{FieldIsEmpty, RecordAlreadyExists, RecordNotFound}
 import org.sigurdthor.book.domain.validation.Validator
 import org.sigurdthor.book.lib.Transformations._
 import org.sigurdthor.bookshelf.grpc.bookservice.ZioBookservice.BookService
 import org.sigurdthor.bookshelf.grpc.bookservice._
 import org.sigurdthor.lib.Logger
 import zio._
-import org.sigurdthor.book.lib.ErrorLogger._
+
+import scala.concurrent.duration._
 
 
-class BookServiceGrpc(persistentEntityRegistry: PersistentEntityRegistry)
+class BookServiceGrpc(clusterSharding: ClusterSharding)
                      (implicit validator: Validator[Book]) extends Logger {
 
   type BookServiceM = Has[ZioBookservice.BookService]
+
+  implicit val timeout = Timeout(5.seconds)
 
   def live: Layer[Nothing, BookServiceM] = ZLayer.fromFunction {
     _ =>
@@ -29,25 +31,36 @@ class BookServiceGrpc(persistentEntityRegistry: PersistentEntityRegistry)
         def addBook(req: AddBookRequest): IO[Status, AddBookResponse] = {
           val flow = for {
             book <- validator.validate(req.toBook)
-            _ <- IO.fromFuture { implicit ec =>
-              bookEntityRef(book.isbn.value).ask(AddBook(book.title, book.authors, book.description)).logError
-            } *> log.debug(s"Book ${req.isbn} has been added")
-          } yield AddBookResponse(OffsetDateTime.now().toString)
+            r <- IO.fromFuture { _ =>
+              entityRef(book.isbn.value)
+                .ask(reply => AddBook(book.title, book.authors, book.description, reply))
+            }
+          } yield r match {
+            case BookAlreadyExists => IO.fail(RecordAlreadyExists)
+            case BookAddedReply(addedAt) => IO.succeed(AddBookResponse(addedAt.toString))
+          }
 
-          flow.mapError {
+          flow.flatten.mapError {
             case FieldIsEmpty(_) => Status.FAILED_PRECONDITION
+            case RecordAlreadyExists => Status.ALREADY_EXISTS
             case _ => Status.INTERNAL
           }
         }
 
         def getBook(req: GetBookRequest): IO[Status, BookResponse] =
           IO.fromFuture { implicit ec =>
-            bookEntityRef(req.isbn).ask(GetBook).logError
-          }.bimap(
-            _ => Status.NOT_FOUND,
-            _.toResponse)
+            entityRef(req.isbn).ask(reply => GetBook(reply))
+              .map {
+                case BookNotFound => IO.fail(RecordNotFound)
+                case reply@(_: BookReply) => IO.succeed(reply.toResponse)
+              }
+          }.flatten.mapError {
+            case RecordNotFound => Status.NOT_FOUND
+            case _ => Status.INTERNAL
+          }
       }
   }
 
-  private def bookEntityRef(bookId: String) = persistentEntityRegistry.refFor[BookEntity](bookId)
+  private def entityRef(id: String): EntityRef[Command] =
+    clusterSharding.entityRefFor(BookEntity.typeKey, id)
 }
