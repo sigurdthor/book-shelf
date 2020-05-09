@@ -3,7 +3,7 @@ import sbt.Keys.{libraryDependencies, version}
 
 val Http4sVersion = "0.21.1"
 val CirceVersion = "0.13.0"
-val calibanVersion = "0.7.4"
+val calibanVersion = "0.7.6"
 val grpcVersion = "1.28.1"
 
 val macwire = "com.softwaremill.macwire" %% "macros" % "2.3.3" % "provided"
@@ -51,7 +51,7 @@ val commonSettings = Def.settings(
   resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
   organization in ThisBuild := "org.sigurdthor",
   version in ThisBuild := "1.0-SNAPSHOT",
-  scalaVersion in ThisBuild := "2.13.1",
+  scalaVersion in ThisBuild := "2.13.2",
   scalacOptions ++= Seq(
     "-feature",
     "-deprecation",

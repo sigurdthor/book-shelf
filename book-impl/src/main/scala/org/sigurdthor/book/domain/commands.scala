@@ -1,24 +1,52 @@
 package org.sigurdthor.book.domain
 
-import akka.Done
-import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
-import org.sigurdthor.book.api.domain.model.{Author, Book, Description, Title}
-import play.api.libs.json.{Format, Json}
+import java.time.OffsetDateTime
 
+import akka.actor.typed.ActorRef
+import julienrf.json.derived
+import org.sigurdthor.book.api.domain.model.{Author, Description, ISBN, Title}
+import play.api.libs.json.{Format, Json, __}
 import org.sigurdthor.book.lib.JsonFormats._
 
 object commands {
 
-  sealed trait BookCommand[R] extends ReplyType[R]
+  trait CommandSerializable
 
-  case class AddBook(title: Title, authors: Seq[Author], description: Description) extends BookCommand[Done]
+  sealed trait Command extends CommandSerializable
 
-  case object GetBook extends BookCommand[Book] {
-    implicit val format: Format[GetBook.type] = singletonFormat(GetBook)
+  final case class AddBook(title: Title, authors: Seq[Author], description: Description, replyTo: ActorRef[AddBookReply]) extends Command
+
+  final case class GetBook(replyTo: ActorRef[GetBookReply]) extends Command
+
+  sealed trait AddBookReply
+
+  final case class BookAddedReply(addedAt: OffsetDateTime) extends AddBookReply
+
+  object BookAddedReply {
+    implicit val format: Format[BookAddedReply] = Json.format
   }
 
-  object AddBook {
-    implicit val format: Format[AddBook] = Json.format
+  final case object BookAlreadyExists extends AddBookReply {
+    implicit val format: Format[BookAlreadyExists.type] = singletonFormat(BookAlreadyExists)
   }
 
+  object AddBookReply {
+    implicit val format: Format[AddBookReply] = derived.flat.oformat((__ \ "type").format[String])
+  }
+
+  sealed trait GetBookReply
+
+  case class BookReply(isbn: ISBN, title: Title, authors: Seq[Author], description: Description) extends GetBookReply
+
+  object BookReply {
+    implicit val format: Format[BookReply] = Json.format
+  }
+
+  case object BookNotFound extends GetBookReply {
+    implicit val format: Format[BookNotFound.type] = singletonFormat(BookNotFound)
+  }
+
+  object GetBookReply {
+    implicit val format: Format[GetBookReply] = derived.flat.oformat((__ \ "type").format[String])
+  }
 }

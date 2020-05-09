@@ -1,5 +1,5 @@
 // The Lagom plugin
-addSbtPlugin("com.lightbend.lagom" % "lagom-sbt-plugin" % "1.6.1")
+addSbtPlugin("com.lightbend.lagom" % "lagom-sbt-plugin" % "1.6.2")
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.5")
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 

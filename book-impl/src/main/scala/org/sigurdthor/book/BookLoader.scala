@@ -1,5 +1,6 @@
 package org.sigurdthor.book
 
+import akka.cluster.sharding.typed.scaladsl.Entity
 import com.lightbend.lagom.scaladsl.akka.discovery.AkkaDiscoveryComponents
 import com.lightbend.lagom.scaladsl.broker.kafka.LagomKafkaComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
@@ -34,11 +35,14 @@ abstract class BookApplication(context: LagomApplicationContext)
   // Register the JSON serializer registry
   override lazy val jsonSerializerRegistry: JsonSerializerRegistry = BookSerializerRegistry
 
+  clusterSharding.init(
+    Entity(BookEntity.typeKey) { entityContext =>
+      BookEntity(entityContext)
+    }
+  )
+
   val bookService: BookServiceGrpc = wire[BookServiceGrpc]
   val zioEnvironment: ZioEnvironment = wire[ZioEnvironment]
 
   zioEnvironment.run()
-
-  // Register the book-shelf persistent entity
-  persistentEntityRegistry.register(wire[BookEntity])
 }

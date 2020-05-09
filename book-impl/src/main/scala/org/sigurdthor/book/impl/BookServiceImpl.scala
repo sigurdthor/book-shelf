@@ -6,7 +6,6 @@ import com.lightbend.lagom.scaladsl.broker.TopicProducer
 import com.lightbend.lagom.scaladsl.persistence.{EventStreamElement, PersistentEntityRegistry}
 import org.sigurdthor.book.api.BookService
 import org.sigurdthor.book.api.domain.events.{BookAddedApi, BookEventApi}
-import org.sigurdthor.book.api.domain.model.ISBN
 import org.sigurdthor.book.domain.events.{BookAdded, BookEvent}
 
 /**
@@ -29,7 +28,7 @@ class BookServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) extend
   private def convertEvent(eventStreamElement: EventStreamElement[BookEvent]): (BookEventApi, Offset) = {
     eventStreamElement match {
       case EventStreamElement(_, BookAdded(isbn, title, authors, description), offset) =>
-        val message = BookAddedApi(ISBN(isbn), title, authors, description)
+        val message = BookAddedApi(isbn, title, authors, description)
         (message, offset)
     }
   }
