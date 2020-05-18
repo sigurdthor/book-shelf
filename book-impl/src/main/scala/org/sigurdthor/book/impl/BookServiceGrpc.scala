@@ -34,7 +34,7 @@ class BookServiceGrpc(clusterSharding: ClusterSharding)
             r <- IO.fromFuture { _ =>
               entityRef(book.isbn.value)
                 .ask(reply => AddBook(book.title, book.authors, book.description, reply))
-            }
+            } <* log.debug(s"Book with ISBN ${book.isbn.value} is added")
           } yield r match {
             case BookAlreadyExists => IO.fail(RecordAlreadyExists)
             case BookAddedReply(addedAt) => IO.succeed(AddBookResponse(addedAt.toString))

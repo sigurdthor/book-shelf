@@ -22,8 +22,8 @@ class ZioEnvironment(recommendationService: RecommendationServiceGrpc, bookServi
 
   def service: ZIO[Console with EventsConsumer#BookEventConsumer, Throwable, Unit] =
     for {
-      _ <- ZIO.accessM[EventsConsumer#BookEventConsumer](_.get.subscribeOnEvents)
       _ <- putStrLn("Recommendation service is running")
+      _ <- ZIO.accessM[EventsConsumer#BookEventConsumer](_.get.subscribeOnEvents)
     } yield ()
 
   def run() = {
