@@ -8,7 +8,8 @@ import org.sigurdthor.bookshelf.grpc.bookservice.ZioBookservice.BookService
 import pureconfig.ConfigSource
 import scalapb.zio_grpc.Server
 import zio.clock.Clock
-import zio.console.{Console, putStrLn}
+import zio.console.{Console, putStr, putStrLn}
+import zio.duration._
 import zio.{Runtime, ZIO}
 
 class ZioEnvironment(bookService: BookServiceGrpc) extends StrictLogging {
@@ -16,6 +17,7 @@ class ZioEnvironment(bookService: BookServiceGrpc) extends StrictLogging {
   def service: ZIO[Console with Clock, Throwable, Unit] =
     for {
       _ <- putStrLn("Book service is running")
+      _ <- (putStr(".") *> ZIO.sleep(1.second)).forever
     } yield ()
 
   def run() = {
