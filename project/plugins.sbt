@@ -8,4 +8,4 @@ addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")
 addSbtPlugin("org.scalameta" %% "sbt-scalafmt" % "2.4.0")
 
 libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.10.3"
-libraryDependencies += "com.thesamet.scalapb.zio-grpc" %% "zio-grpc-codegen" % "0.2.0+26-9f40b6df-SNAPSHOT"
+libraryDependencies += "com.thesamet.scalapb.zio-grpc" %% "zio-grpc-codegen" % "0.2.0+48-3e9cad8c-SNAPSHOT"
