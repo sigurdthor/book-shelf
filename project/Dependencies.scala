@@ -2,15 +2,15 @@ import sbt._
 
 object Dependencies {
 
-  val Http4sVersion = "0.21.4"
+  val Http4sVersion = "0.21.13"
   val CirceVersion = "0.13.0"
-  val calibanVersion = "0.8.0"
+  val calibanVersion = "0.9.3"
 
   val macwire = "com.softwaremill.macwire" %% "macros" % "2.3.3" % "provided"
   val scalaTest = "org.scalatest" %% "scalatest" % "3.1.1" % Test
-  val zio = "dev.zio" %% "zio" % "1.0.0-RC19"
-  val catz = "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC14"
-  val cats = "org.typelevel" %% "cats-core" % "2.1.1"
+  val zio = "dev.zio" %% "zio" % "1.0.3"
+  val catz = "dev.zio" %% "zio-interop-cats" % "2.2.0.1"
+  val cats = "org.typelevel" %% "cats-core" % "2.3.0"
 
   val http4s = "org.http4s" %% "http4s-blaze-server" % Http4sVersion
   val http4sCirce = "org.http4s" %% "http4s-circe" % Http4sVersion
@@ -25,15 +25,15 @@ object Dependencies {
 
   val playJsonDerivedCodecs = "org.julienrf" %% "play-json-derived-codecs" % "7.0.0"
 
-  val discovery = "com.typesafe.akka" %% "akka-discovery" % "2.6.4"
-  val discoveryLagom = "com.lightbend.lagom" %% "lagom-scaladsl-akka-discovery-service-locator" % "1.6.1"
-  val discoveryKubernetes = "com.lightbend.akka.discovery" %% "akka-discovery-kubernetes-api" % "1.0.5"
+  val discovery = "com.typesafe.akka" %% "akka-discovery" % "2.6.10"
+  val discoveryLagom = "com.lightbend.lagom" %% "lagom-scaladsl-akka-discovery-service-locator" % "1.6.4"
+  val discoveryKubernetes = "com.lightbend.akka.discovery" %% "akka-discovery-kubernetes-api" % "1.0.9"
 
-  val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.12.3"
+  val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.14.0"
   val logstage = "io.7mind.izumi" %% "logstage-core" % "0.10.8"
-  val chimney = "io.scalaland" %% "chimney" % "0.5.0"
+  val chimney = "io.scalaland" %% "chimney" % "0.6.1"
 
-  val elastic4sVersion = "7.3.5"
+  val elastic4sVersion = "7.9.2"
   val elastic4s = "com.sksamuel.elastic4s" %% "elastic4s-core" % elastic4sVersion
   val esjava = "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % elastic4sVersion
   val esZio = "com.sksamuel.elastic4s" %% "elastic4s-effect-zio" % elastic4sVersion

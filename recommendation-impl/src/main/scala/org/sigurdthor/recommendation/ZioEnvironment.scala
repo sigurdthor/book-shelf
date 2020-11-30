@@ -9,7 +9,7 @@ import org.sigurdthor.recommendation.consumers.EventsConsumer
 import org.sigurdthor.recommendation.impl.RecommendationServiceGrpc
 import org.sigurdthor.recommendation.repository.{ElasticConnection, RecommendationRepository}
 import pureconfig.ConfigSource
-import scalapb.zio_grpc.Server
+import scalapb.zio_grpc.ServerLayer
 import zio.clock.Clock
 import zio.console.{Console, putStrLn}
 import zio.{Runtime, ZIO}
@@ -31,7 +31,7 @@ class ZioEnvironment(recommendationService: RecommendationServiceGrpc, bookServi
       case Right(cfg) =>
         val serviceLayer = elasticClientLayer(cfg.elasticsearch) >>> RecommendationRepository.live >>> recommendationService.live
         val consumerLayer = elasticClientLayer(cfg.elasticsearch) >>> RecommendationRepository.live >>> new EventsConsumer(bookService).live
-        val grpcServerLayer = serviceLayer >>> Server.live[RecommendationService](ServerBuilder.forPort(cfg.grpc.port))
+        val grpcServerLayer = serviceLayer >>> ServerLayer.access[RecommendationService](ServerBuilder.forPort(cfg.grpc.port))
         val appLayer = grpcServerLayer ++ consumerLayer ++ Console.live ++ Clock.live
 
         val app = service.provideSomeLayer[zio.ZEnv](appLayer)

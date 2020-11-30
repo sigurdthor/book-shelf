@@ -2,7 +2,7 @@ package org.sigurdthor.book.domain
 
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
 import org.sigurdthor.book.api.domain.model.Book
-import org.sigurdthor.book.domain.commands.{AddBook, AddBookReply, BookAlreadyExists, BookNotFound, GetBook, GetBookReply}
+import org.sigurdthor.book.domain.commands.{AddBookReply, BookAlreadyExists, BookNotFound, GetBookReply}
 import org.sigurdthor.book.domain.events.BookAdded
 
 import scala.collection.immutable.Seq

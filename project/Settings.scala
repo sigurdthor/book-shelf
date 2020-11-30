@@ -6,13 +6,13 @@ import sbtprotoc.ProtocPlugin.autoImport.PB
 
 object Settings {
 
-  private val grpcVersion = "1.29.0"
+  private val grpcVersion = "1.33.1"
 
   val commonSettings = Def.settings(
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     organization in ThisBuild := "org.sigurdthor",
     version in ThisBuild := "1.0-SNAPSHOT",
-    scalaVersion in ThisBuild := "2.13.2",
+    scalaVersion in ThisBuild := "2.13.4",
     scalacOptions ++= Seq(
       "-feature",
       "-deprecation",
