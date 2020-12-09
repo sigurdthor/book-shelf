@@ -1,40 +1,54 @@
 package org.sigurdthor.book.impl
 
-import akka.actor.ActorSystem
-import akka.testkit.TestKit
-import com.lightbend.lagom.scaladsl.testkit.PersistentEntityTestDriver
-import com.lightbend.lagom.scaladsl.playjson.JsonSerializerRegistry
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
-import org.sigurdthor.book.domain.{BookEntity, BookshelfCommand, BookshelfEvent, BookshelfSerializerRegistry, BookshelfState, GreetingMessageChanged, Hello, UseGreetingMessage}
+import akka.actor.testkit.typed.scaladsl.{LogCapturing, ScalaTestWithActorTestKit}
+import akka.persistence.typed.PersistenceId
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.sigurdthor.book.api.domain.model.{Author, Description, Title}
+import org.sigurdthor.book.domain.BookEntity
+import org.sigurdthor.book.domain.commands.{AddBook, AddBookReply, BookAddedReply, BookNotFound, BookReply, GetBook, GetBookReply}
 
-class BookshelfEntitySpec extends WordSpec with Matchers with BeforeAndAfterAll {
+import java.util.UUID
 
-  private val system = ActorSystem("BookshelfEntitySpec",
-    JsonSerializerRegistry.actorSystemSetupFor(BookshelfSerializerRegistry))
+class BookshelfEntitySpec
+    extends ScalaTestWithActorTestKit(s"""
+                                                                  |akka.persistence.journal.plugin = "akka.persistence.journal.inmem"
+                                                                  |akka.persistence.snapshot-store.plugin = "akka.persistence.snapshot-store.local"
+                                                                  |akka.persistence.snapshot-store.local.dir = "target/snapshot-${UUID
+                                           .randomUUID()
+                                           .toString}"
+                                                                  |""".stripMargin)
+    with AnyWordSpecLike
+    with LogCapturing {
 
-  override protected def afterAll(): Unit = {
-    TestKit.shutdownActorSystem(system)
-  }
+  private lazy val randomId: String = UUID.randomUUID().toString
 
-  private def withTestDriver(block: PersistentEntityTestDriver[BookshelfCommand[_], BookshelfEvent, BookshelfState] => Unit): Unit = {
-    val driver = new PersistentEntityTestDriver(system, new BookEntity, "book-shelf-1")
-    block(driver)
-    driver.getAllIssues should have size 0
-  }
+  "Bookshelf" must {
 
-  "book-shelf entity" should {
+    "add book" in {
+      val probe      = createTestProbe[AddBookReply]()
+      val bookEntity = spawn(BookEntity(PersistenceId("BookEntity", randomId)))
+      bookEntity ! AddBook(Title("Test book"),
+                           Seq(Author("John")),
+                           Description("test book"),
+                           probe.ref)
 
-    "say hello by default" in withTestDriver { driver =>
-      val outcome = driver.run(Hello("Alice"))
-      outcome.replies should contain only "Hello, Alice!"
+      probe.expectMessageType[BookAddedReply]
     }
 
-    "allow updating the greeting message" in withTestDriver { driver =>
-      val outcome1 = driver.run(UseGreetingMessage("Hi"))
-      outcome1.events should contain only GreetingMessageChanged("Hi")
-      val outcome2 = driver.run(Hello("Alice"))
-      outcome2.replies should contain only "Hi, Alice!"
+    "get book" in {
+      val probe      = createTestProbe[GetBookReply]()
+      val bookEntity = spawn(BookEntity(PersistenceId("BookEntity", randomId)))
+      bookEntity ! GetBook(probe.ref)
+
+      probe.expectMessageType[BookReply]
     }
 
+    "fail on get book with unknown id" in {
+      val probe      = createTestProbe[GetBookReply]()
+      val bookEntity = spawn(BookEntity(PersistenceId("BookEntity", UUID.randomUUID().toString)))
+      bookEntity ! GetBook(probe.ref)
+
+      probe.expectMessageType[BookNotFound.type]
+    }
   }
 }

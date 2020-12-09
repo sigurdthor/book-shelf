@@ -1,3 +1,4 @@
+import com.lightbend.lagom.core.LagomVersion
 import sbt._
 
 object Dependencies {
@@ -25,9 +26,8 @@ object Dependencies {
 
   val playJsonDerivedCodecs = "org.julienrf" %% "play-json-derived-codecs" % "7.0.0"
 
-  val discovery = "com.typesafe.akka" %% "akka-discovery" % "2.6.10"
-  val discoveryLagom = "com.lightbend.lagom" %% "lagom-scaladsl-akka-discovery-service-locator" % "1.6.4"
-  val discoveryKubernetes = "com.lightbend.akka.discovery" %% "akka-discovery-kubernetes-api" % "1.0.9"
+  val akkaDiscoveryKubernetesApi = "com.lightbend.akka.discovery" %% "akka-discovery-kubernetes-api"                 % "1.0.1"
+  val lagomScaladslAkkaDiscovery = "com.lightbend.lagom"          %% "lagom-scaladsl-akka-discovery-service-locator" % LagomVersion.current
 
   val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.14.0"
   val logstage = "io.7mind.izumi" %% "logstage-core" % "0.10.8"

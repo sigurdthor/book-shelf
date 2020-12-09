@@ -1,5 +1,5 @@
 import sbt.Keys.libraryDependencies
-import Dependencies._
+import Dependencies.{lagomScaladslAkkaDiscovery, _}
 import Settings._
 
 lazy val `book-shelf` = (project in file("."))
@@ -37,8 +37,8 @@ lazy val `book-impl` = (project in file("book-impl"))
       chimney,
       macwire,
       scalaTest,
-      discoveryLagom,
-      discoveryKubernetes
+      lagomScaladslAkkaDiscovery,
+      akkaDiscoveryKubernetesApi
     )
   )
   .settings(lagomForkedTestSettings)
@@ -67,8 +67,8 @@ lazy val `recommendation-impl` = (project in file("recommendation-impl"))
       esCirce,
       pureconfig,
       scalaTest,
-      discoveryLagom,
-      discoveryKubernetes
+      lagomScaladslAkkaDiscovery,
+      akkaDiscoveryKubernetesApi
     )
   )
   .settings(lagomForkedTestSettings)
@@ -89,8 +89,8 @@ lazy val `graphql-gateway` = (project in file("graphql-gateway"))
       circeOptics,
       caliban,
       calibanHttp4s,
-      discovery,
-      discoveryKubernetes
+      lagomScaladslAkkaDiscovery,
+      akkaDiscoveryKubernetesApi
     )
   )
   .settings(commonSettings ++ grpcSettings)
